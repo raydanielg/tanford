@@ -1,6 +1,11 @@
 <?php
-// Simple front controller to redirect all requests to Laravel's public/index.php
-// Useful when your hosting document root points to the project root instead of /public.
+// Redirect all requests to Laravel's public/ directory when the document root
+// points to the project root instead of /public.
 
-// If you want to hard-code a subdirectory, adjust this path accordingly.
-require __DIR__ . '/public/index.php';
+// Optional: prevent caching of the redirect response
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+
+// Redirect to the public folder (web server will serve public/index.php)
+header('Location: public/');
+exit;
