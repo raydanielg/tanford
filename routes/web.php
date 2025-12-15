@@ -157,6 +157,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Admin blog management
     Route::get('/admin/posts', [AdminPostController::class, 'index'])->name('admin.posts.index');
+    Route::get('/admin/posts/create', [AdminPostController::class, 'create'])->name('admin.posts.create');
     Route::get('/admin/posts/{post}/edit', [AdminPostController::class, 'edit'])->name('admin.posts.edit');
     Route::post('/admin/posts', [AdminPostController::class, 'store'])->name('admin.posts.store');
     // Use POST for update and delete to avoid HTTP verb issues

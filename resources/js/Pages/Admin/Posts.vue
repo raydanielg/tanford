@@ -135,14 +135,13 @@ const postCount = computed(() => props.posts.length);
                         <span class="font-semibold">{{ postCount }}</span>
                         <span class="text-emerald-800/80">posts</span>
                     </div>
-                    <button
-                        type="button"
+                    <Link
+                        :href="route('admin.posts.create')"
                         class="inline-flex items-center gap-1 rounded-full bg-emerald-600 px-3 py-1.5 text-[11px] font-semibold text-white hover:bg-emerald-700"
-                        @click="openCreateModal"
                     >
                         <span class="material-icons text-[13px]">add</span>
                         <span>New post</span>
-                    </button>
+                    </Link>
                 </div>
             </div>
 

@@ -105,6 +105,13 @@ class PostController extends Controller
         return redirect()->back();
     }
 
+    public function create(Request $request): Response
+    {
+        $this->ensureAdmin();
+
+        return Inertia::render('Admin/PostCreate');
+    }
+
     public function edit(Request $request, Post $post): Response
     {
         $this->ensureAdmin();
