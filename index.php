@@ -1,12 +1,6 @@
 <?php
-// Simple front controller at project root to forward to Laravel public/index.php
+// Simple front controller to redirect all requests to Laravel's public/index.php
+// Useful when your hosting document root points to the project root instead of /public.
 
-$publicIndex = __DIR__ . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'index.php';
-
-if (! file_exists($publicIndex)) {
-    http_response_code(500);
-    echo 'Laravel public/index.php not found.';
-    exit;
-}
-
-require $publicIndex;
+// If you want to hard-code a subdirectory, adjust this path accordingly.
+require __DIR__ . '/public/index.php';
