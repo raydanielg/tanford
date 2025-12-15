@@ -1,7 +1,7 @@
 <template>
     <section
         id="home"
-        class="relative min-h-screen overflow-hidden bg-gray-900 text-white"
+        class="relative overflow-hidden bg-gray-900 text-white"
     >
         <!-- Background images with blur and overlay -->
         <div class="absolute inset-0 flex overflow-hidden">
@@ -10,7 +10,7 @@
         </div>
         <div class="absolute inset-0 bg-gradient-to-r from-emerald-900/70 via-emerald-800/60 to-emerald-900/70"></div>
 
-        <div class="relative py-16 px-4 mx-auto max-w-screen-xl text-center lg:py-24 lg:px-12">
+        <div class="relative py-16 px-4 mx-auto max-w-screen-xl text-center lg:py-20 lg:px-12">
             <!-- Badge (notification) -->
             <a
                 :href="currentNotification ? currentNotification.url : '#'"
