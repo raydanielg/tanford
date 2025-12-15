@@ -25,6 +25,51 @@ Laravel is accessible, powerful, and provides tools required for large, robust a
 
 Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
 
+## Importing legacy data from WordPress export
+
+Some data (forum registrations, UAE Residents, and blog posts) can be imported from
+the old WordPress database export JSON file (`tanfordu_wp115.json`).
+
+Make sure you run these commands from the project root and that the path to the JSON
+file is correct for your machine (update the drive/path if needed).
+
+### 1. Import forum registrations (Tanzania Global Logistics Forum 2025)
+
+```bash
+php artisan import:forminator-forum "e:\COMPANIES TASKS\Tanford\tanfordu_wp115.json" --form-id=195
+```
+
+- Imports Forminator entries for form_id `195` into the `forum_registrations` table.
+- Skips entries that already exist based on the unique key (`forum_name` + `email`).
+- Sets `status` to `pending` for imported rows.
+
+### 2. Import UAE Residents registrations
+
+```bash
+php artisan import:forminator-uae "e:\COMPANIES TASKS\Tanford\tanfordu_wp115.json" --form-id=325
+```
+
+- Imports Forminator entries for form_id `325` into the `uae_residents` table.
+- Skips entries that already exist based on `email` + `created_at` date.
+- Fields like `passport_number` and `emirates_id` are left blank (empty string) because
+  the original form did not collect them.
+
+### 3. Import WordPress blog posts
+
+```bash
+php artisan import:wp-blogs "e:\COMPANIES TASKS\Tanford\tanfordu_wp115.json"
+```
+
+- Reads the `wpgs_posts` table from the JSON export.
+- Imports only rows where `post_type = 'post'` and `post_status = 'publish'`.
+- Maps:
+  - `post_title` → `title`
+  - `post_name` → `slug` (auto-generated from title if empty)
+  - `post_content` → `body`
+  - `post_excerpt` → `excerpt` (auto-generated from content if empty)
+  - `post_date` → `published_at`, `created_at`, `updated_at`
+- Skips posts whose `slug` already exists in the `posts` table.
+
 If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
 ## Laravel Sponsors
