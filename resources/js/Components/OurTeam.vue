@@ -10,20 +10,22 @@
                     and drive innovation across Tanzania and the GCC region.
                 </p>
             </div>
-            <div class="grid gap-8 mb-6 lg:mb-16 md:grid-cols-2">
+            <div class="grid gap-8 mb-6 lg:mb-16 sm:grid-cols-2 lg:grid-cols-3">
                 <div
                     v-for="member in teamMembers"
                     :key="member.id"
-                    class="items-center bg-gray-50 rounded-lg shadow sm:flex"
+                    class="items-stretch bg-gray-50 rounded-lg shadow flex flex-col sm:flex-row"
                 >
-                    <div class="w-full sm:w-auto">
+                    <div class="w-full sm:w-44 md:w-48 lg:w-52 flex-shrink-0">
+                        <div class="relative w-full aspect-[4/3] overflow-hidden rounded-t-lg sm:rounded-none sm:rounded-l-lg bg-gray-200">
                         <img
-                            class="w-full rounded-lg sm:rounded-none sm:rounded-l-lg object-cover h-56 sm:h-full"
+                            class="absolute inset-0 w-full h-full object-cover"
                             :src="member.photo_url"
                             :alt="member.name"
                         />
+                        </div>
                     </div>
-                    <div class="p-5">
+                    <div class="p-5 flex flex-col justify-between">
                         <h3 class="text-xl font-bold tracking-tight">
                             <span class="text-gray-900 hover:text-emerald-600 cursor-default">
                                 {{ member.name }}

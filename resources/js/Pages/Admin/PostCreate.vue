@@ -32,7 +32,17 @@ const submit = () => {
     <Head title="Create Post" />
 
     <AuthenticatedLayout>
-        <div class="space-y-6">
+        <div class="space-y-6 relative">
+            <!-- Global loading overlay for slow uploads/submits -->
+            <div
+                v-if="form.processing"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-white/70"
+            >
+                <div class="flex flex-col items-center gap-2 text-xs text-gray-700">
+                    <div class="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-[11px]">Uploading / saving post, please wait...</p>
+                </div>
+            </div>
             <!-- Header -->
             <div class="flex items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
