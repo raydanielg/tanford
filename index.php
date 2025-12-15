@@ -1,7 +1,5 @@
 <?php
-
-// Simple front controller at project root to forward to the real Laravel entry point.
-// This is useful on hosts where the document root cannot be set to the /public directory.
+// Simple front controller at project root to forward to Laravel public/index.php
 
 $publicIndex = __DIR__ . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'index.php';
 
