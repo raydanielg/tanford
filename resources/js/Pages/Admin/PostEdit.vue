@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const props = defineProps({
     post: {
@@ -24,7 +24,23 @@ const form = useForm({
     published: !!props.post.published_at,
 });
 
+const editorRef = ref(null);
+
 const isPublished = computed(() => !!props.post.published_at);
+
+const applyFormat = (command, value = null) => {
+    if (typeof document === 'undefined') return;
+    editorRef.value?.focus();
+    document.execCommand(command, false, value);
+};
+
+const toggleBlock = (tag) => {
+    applyFormat('formatBlock', tag);
+};
+
+const onBodyInput = (event) => {
+    form.body = event.target.innerHTML;
+};
 
 const submit = () => {
     form.post(route('admin.posts.update', props.post.id), {
@@ -112,13 +128,67 @@ const submit = () => {
                             ></textarea>
                         </div>
                         <div>
-                            <label class="block mb-1 text-gray-700 text-[11px]">Body (HTML supported)</label>
-                            <textarea
-                                v-model="form.body"
-                                rows="14"
-                                class="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:border-emerald-500 focus:ring-emerald-500 font-mono"
-                                placeholder="You can use basic HTML tags (p, strong, em, ul, img, audio, video, etc.)"
-                            ></textarea>
+                            <label class="block mb-1 text-gray-700 text-[11px]">Body (rich text)</label>
+                            <!-- Toolbar -->
+                            <div class="flex flex-wrap items-center gap-1 mb-2 text-[11px]">
+                                <button
+                                    type="button"
+                                    class="px-2 py-1 rounded border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 font-semibold"
+                                    @click="applyFormat('bold')"
+                                >
+                                    B
+                                </button>
+                                <button
+                                    type="button"
+                                    class="px-2 py-1 rounded border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 italic"
+                                    @click="applyFormat('italic')"
+                                >
+                                    I
+                                </button>
+                                <button
+                                    type="button"
+                                    class="px-2 py-1 rounded border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 underline"
+                                    @click="applyFormat('underline')"
+                                >
+                                    U
+                                </button>
+                                <button
+                                    type="button"
+                                    class="px-2 py-1 rounded border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700"
+                                    @click="toggleBlock('h3')"
+                                >
+                                    H3
+                                </button>
+                                <button
+                                    type="button"
+                                    class="px-2 py-1 rounded border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700"
+                                    @click="applyFormat('insertUnorderedList')"
+                                >
+                                    • List
+                                </button>
+                                <button
+                                    type="button"
+                                    class="px-2 py-1 rounded border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700"
+                                    @click="() => {
+                                        const url = prompt('Link URL');
+                                        if (url) applyFormat('createLink', url);
+                                    }"
+                                >
+                                    Link
+                                </button>
+                            </div>
+
+                            <!-- Rich text area -->
+                            <div
+                                ref="editorRef"
+                                class="w-full min-h-[220px] border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500 bg-white prose prose-sm max-w-none"
+                                contenteditable="true"
+                                :innerHTML="form.body"
+                                @input="onBodyInput"
+                            ></div>
+                            <p class="mt-1 text-[10px] text-gray-400">
+                                You can format text (bold, italic, lists, headings) and insert links.
+                            </p>
                             <p v-if="form.errors.body" class="mt-1 text-[10px] text-red-600">
                                 {{ form.errors.body }}
                             </p>
