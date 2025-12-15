@@ -3,6 +3,7 @@ import { ref } from 'vue';
 
 const isDarkMode = ref(true);
 const isMoreDropdownOpen = ref(false);
+const isMobileMenuOpen = ref(false);
 
 const toggleDarkMode = () => {
     isDarkMode.value = !isDarkMode.value;
@@ -16,15 +17,19 @@ const toggleDarkMode = () => {
 const toggleMoreDropdown = () => {
     isMoreDropdownOpen.value = !isMoreDropdownOpen.value;
 };
+
+const toggleMobileMenu = () => {
+    isMobileMenuOpen.value = !isMobileMenuOpen.value;
+};
 </script>
 
 <template>
     <header class="w-full" :class="isDarkMode ? 'dark' : ''">
         <!-- Top bar (emerald) -->
-        <div class="bg-emerald-600 text-white text-xs border-b border-emerald-700">
-            <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 sm:px-6 lg:px-8">
+        <div class="bg-emerald-600 text-white text-[11px] sm:text-xs border-b border-emerald-700">
+            <div class="mx-auto flex max-w-7xl items-center justify-between px-3 py-2 sm:px-6 lg:px-8">
                 <!-- Left: Email + Call -->
-                <div class="flex items-center gap-6">
+                <div class="flex items-center gap-3 sm:gap-6">
                     <div class="flex items-center gap-1">
                         <span class="material-icons text-sm">mail</span>
                         <span>Email: <a href="mailto:info@tanford.net" class="hover:text-emerald-400">info@tanford.net</a></span>
@@ -36,7 +41,7 @@ const toggleMoreDropdown = () => {
                 </div>
 
                 <!-- Right: Dark Mode + Language + Sign In -->
-                <div class="flex items-center gap-4">
+                <div class="hidden sm:flex items-center gap-3 sm:gap-4">
                     <button @click="toggleDarkMode" class="hover:opacity-80 transition text-white">
                         <span class="material-icons text-sm">{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</span>
                     </button>
@@ -50,19 +55,19 @@ const toggleMoreDropdown = () => {
         </div>
 
         <!-- Main nav bar (white) -->
-        <nav class="bg-white text-gray-900">
-            <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+        <nav class="bg-white text-gray-900 shadow-sm">
+            <div class="mx-auto flex max-w-7xl items-center justify-between px-3 py-3 sm:px-6 lg:px-8">
                 <!-- Left: Logo with white background -->
-                <div class="flex items-center gap-3 bg-white px-4 py-2 rounded">
+                <div class="flex items-center gap-3 bg-white px-3 py-2 rounded">
                     <img
                         src="/tanford.logo.png"
                         alt="TANFORD Logo"
-                        class="h-10 w-auto"
+                        class="h-8 sm:h-10 w-auto"
                     />
                 </div>
 
-                <!-- Center: Links -->
-                <div class="flex flex-1 items-center justify-center gap-8 px-6 text-sm font-medium">
+                <!-- Center: Links (desktop / tablet) -->
+                <div class="hidden lg:flex flex-1 items-center justify-center gap-8 px-6 text-sm font-medium">
                     <a href="/" class="hover:text-emerald-600 transition">Home</a>
                     <a href="/blog" class="hover:text-emerald-600 transition">Blog</a>
                     <a href="/about" class="hover:text-emerald-600 transition">About</a>
@@ -207,8 +212,8 @@ const toggleMoreDropdown = () => {
                     </div>
                 </div>
 
-                <!-- Right: Search + Sign In -->
-                <div class="flex items-center gap-4">
+                <!-- Right: Search + CTA (desktop) -->
+                <div class="hidden md:flex items-center gap-4">
                     <!-- Search -->
                     <div class="hidden md:flex items-center bg-gray-100 rounded px-3 py-1">
                         <input
@@ -226,6 +231,42 @@ const toggleMoreDropdown = () => {
                     >
                         Get Started
                     </a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <button
+                    type="button"
+                    class="inline-flex items-center justify-center rounded-md p-2 text-gray-700 hover:bg-gray-100 lg:hidden"
+                    @click="toggleMobileMenu"
+                >
+                    <span class="material-icons text-2xl">{{ isMobileMenuOpen ? 'close' : 'menu' }}</span>
+                </button>
+            </div>
+
+            <!-- Mobile menu panel -->
+            <div v-if="isMobileMenuOpen" class="lg:hidden border-t border-gray-100 bg-white">
+                <div class="space-y-1 px-4 py-4 text-sm font-medium">
+                    <a href="/" class="block py-2 hover:text-emerald-600">Home</a>
+                    <a href="/blog" class="block py-2 hover:text-emerald-600">Blog</a>
+                    <a href="/about" class="block py-2 hover:text-emerald-600">About</a>
+                    <a href="/contact" class="block py-2 hover:text-emerald-600">Contact</a>
+                    <a href="#faq" class="block py-2 hover:text-emerald-600">FAQ</a>
+                    <a href="/services" class="block py-2 hover:text-emerald-600">Services</a>
+                    <a href="/events" class="block py-2 hover:text-emerald-600">Events</a>
+                    <a href="/resources" class="block py-2 hover:text-emerald-600">Resources</a>
+                    <a href="/partners" class="block py-2 hover:text-emerald-600">Partners</a>
+                    <a href="/uaeresidents" class="block py-2 hover:text-emerald-600">UAE Residents</a>
+                    <a href="/forumregster" class="block py-2 hover:text-emerald-600">Forum Registration</a>
+
+                    <div class="pt-3 mt-3 border-t border-gray-100 flex flex-col gap-2">
+                        <a
+                            href="/how-it-works"
+                            class="inline-flex justify-center items-center rounded-md bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700"
+                        >
+                            Get Started
+                        </a>
+                        <a href="/login" class="text-xs text-gray-700 hover:text-emerald-600">Sign In</a>
+                    </div>
                 </div>
             </div>
         </nav>
