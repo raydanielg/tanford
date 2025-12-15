@@ -1,0 +1,309 @@
+<script setup>
+import Header from '@/Components/Header.vue';
+import Footer from '@/Components/Footer.vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { useForm } from '@inertiajs/vue3';
+
+const days = ref('00');
+const hours = ref('00');
+const minutes = ref('00');
+const seconds = ref('00');
+
+let timerId = null;
+
+const form = useForm({
+    attendee_type: '',
+    name: '',
+    email: '',
+    phone: '',
+    city: '',
+    country: '',
+    nationality: '',
+    passport_number: '',
+    emirates_id: '',
+    job_title: '',
+    organization: '',
+    website: '',
+    attendance_days: [],
+    package: '',
+    agree_terms: false,
+});
+
+const successMessage = ref('');
+
+const targetDate = new Date('2026-02-13T09:00:00+04:00');
+
+const updateCountdown = () => {
+    const now = new Date().getTime();
+    const distance = targetDate.getTime() - now;
+
+    if (distance <= 0) {
+        days.value = '00';
+        hours.value = '00';
+        minutes.value = '00';
+        seconds.value = '00';
+        if (timerId) window.clearInterval(timerId);
+        return;
+    }
+
+    const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const h = Math.floor((distance / (1000 * 60 * 60)) % 24);
+    const m = Math.floor((distance / (1000 * 60)) % 60);
+    const s = Math.floor((distance / 1000) % 60);
+
+    days.value = String(d).padStart(2, '0');
+    hours.value = String(h).padStart(2, '0');
+    minutes.value = String(m).padStart(2, '0');
+    seconds.value = String(s).padStart(2, '0');
+};
+
+onMounted(() => {
+    updateCountdown();
+    timerId = window.setInterval(updateCountdown, 1000);
+});
+
+onBeforeUnmount(() => {
+    if (timerId) window.clearInterval(timerId);
+});
+
+const submitDiasporaForm = () => {
+    form.post(route('uaeresidents.store'), {
+        preserveScroll: true,
+        onSuccess: () => {
+            successMessage.value = 'Thank you for registering as a UAE resident attendee. We will contact you soon.';
+            form.reset();
+            setTimeout(() => {
+                successMessage.value = '';
+            }, 6000);
+        },
+    });
+};
+</script>
+
+<template>
+    <div class="min-h-screen bg-white text-gray-900">
+        <Header />
+        <main>
+            <!-- Hero only (no breadcrumb) -->
+            <section
+                class="relative min-h-screen flex flex-col items-center justify-center text-white overflow-hidden"
+            >
+                <div
+                    class="absolute inset-0 bg-cover bg-center"
+                    style="background-image: url('/images/DXB_3883-1536x1024.jpg'); filter: brightness(0.6);"
+                ></div>
+                <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
+
+                <div class="relative z-10 max-w-4xl px-4 text-center">
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4">
+                        TANZANIA TRADE AND LOGISTICS FORUM
+                    </h1>
+                    <p class="text-lg sm:text-xl lg:text-2xl font-medium mb-8">
+                        13 to 14 February 2026, Shangri-La Hotel, Dubai
+                    </p>
+
+                    <!-- Countdown -->
+                    <div class="mt-4 mb-10 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto">
+                        <div class="bg-white/10 backdrop-blur-md rounded-lg py-4 px-3 flex flex-col items-center shadow-lg">
+                            <div class="text-3xl sm:text-4xl font-extrabold">{{ days }}</div>
+                            <div class="text-xs uppercase tracking-wide text-gray-200 mt-1">Days</div>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-md rounded-lg py-4 px-3 flex flex-col items-center shadow-lg">
+                            <div class="text-3xl sm:text-4xl font-extrabold">{{ hours }}</div>
+                            <div class="text-xs uppercase tracking-wide text-gray-200 mt-1">Hours</div>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-md rounded-lg py-4 px-3 flex flex-col items-center shadow-lg">
+                            <div class="text-3xl sm:text-4xl font-extrabold">{{ minutes }}</div>
+                            <div class="text-xs uppercase tracking-wide text-gray-200 mt-1">Minutes</div>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-md rounded-lg py-4 px-3 flex flex-col items-center shadow-lg">
+                            <div class="text-3xl sm:text-4xl font-extrabold">{{ seconds }}</div>
+                            <div class="text-xs uppercase tracking-wide text-gray-200 mt-1">Seconds</div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mt-4">
+                        <a
+                            href="/forumregster"
+                            class="inline-flex justify-center items-center py-3 px-8 text-base font-bold text-center text-white rounded-lg bg-emerald-600 hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-300 transition-all duration-300 uppercase tracking-wide"
+                        >
+                            Proceed to Forum Registration
+                        </a>
+                        <a
+                            href="/"
+                            class="inline-flex justify-center items-center py-3 px-8 text-base font-medium text-center text-white/80 rounded-lg border border-white/50 hover:bg-white/10 transition-all duration-300"
+                        >
+                            Back to Home
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Diaspora Registration Form Section -->
+            <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+                <div class="mx-auto max-w-4xl">
+                    <div class="mb-10 text-center">
+                        <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">Your Home Advantage Starts Here</h2>
+                        <p class="text-lg text-emerald-700 font-semibold mb-2">Exclusive Diaspora Rate to the Tanzania Trade &amp; Logistics Business Forum</p>
+                        <p class="text-gray-700 mb-2">
+                            This category is dedicated to Tanzanians living in the UAE and the Middle East who wish to attend the Tanzania Trade &amp; Logistics Forum 2026.
+                        </p>
+                        <p class="text-gray-600">
+                            The Diaspora rate is a special discounted package designed to encourage participation, learning, networking, and contribution to national development.
+                        </p>
+                    </div>
+
+                    <form @submit.prevent="submitDiasporaForm" class="bg-white rounded-2xl shadow-lg p-8 space-y-8">
+                        <!-- Attendant Information -->
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-6 pb-3 border-b-2 border-emerald-600">Attendant Information</h3>
+
+                            <!-- Attendee Type -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">Attendee Type <span class="text-rose-600">*</span></label>
+                                <select v-model="form.attendee_type" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent" required>
+                                    <option value="">Select attendee type</option>
+                                    <option value="individual">Individual</option>
+                                    <option value="company">Company Representative</option>
+                                </select>
+                            </div>
+
+                            <!-- Name -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">Name <span class="text-rose-600">*</span></label>
+                                <input v-model="form.name" type="text" placeholder="E.g. John Doe" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent" required />
+                            </div>
+
+                            <!-- Email -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">Email Address <span class="text-rose-600">*</span></label>
+                                <input v-model="form.email" type="email" placeholder="E.g. john@doe.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent" required />
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">Phone <span class="text-rose-600">*</span></label>
+                                <div class="flex gap-2">
+                                    <select class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                                        <option>United Arab Emirates +971</option>
+                                        <option>Tanzania +255</option>
+                                        <option>Other</option>
+                                    </select>
+                                    <input v-model="form.phone" type="tel" placeholder="50 123 4567" class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent" required />
+                                </div>
+                            </div>
+
+                            <!-- City -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">City <span class="text-rose-600">*</span></label>
+                                <input v-model="form.city" type="text" placeholder="E.g. Sydney" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent" required />
+                            </div>
+
+                            <!-- Country of Residence -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">Country of Residence <span class="text-rose-600">*</span></label>
+                                <input v-model="form.country" type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent" required />
+                            </div>
+
+                            <!-- Nationality -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">Nationality <span class="text-rose-600">*</span></label>
+                                <input v-model="form.nationality" type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent" required />
+                            </div>
+
+                            <!-- Passport Number -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">Passport Number <span class="text-rose-600">*</span></label>
+                                <input v-model="form.passport_number" type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent" required />
+                            </div>
+
+                            <!-- Emirates ID Number -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">Emirates ID Number <span class="text-rose-600">*</span></label>
+                                <input v-model="form.emirates_id" type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent" required />
+                            </div>
+                        </div>
+
+                        <!-- Professional Information -->
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-6 pb-3 border-b-2 border-emerald-600">Professional Information</h3>
+
+                            <!-- Job Title -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">Job Title <span class="text-rose-600">*</span></label>
+                                <input v-model="form.job_title" type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent" required />
+                            </div>
+
+                            <!-- Organization/Company -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">Organization/Company</label>
+                                <input v-model="form.organization" type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+                            </div>
+
+                            <!-- Professional Website -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">Professional Website</label>
+                                <input v-model="form.website" type="url" placeholder="E.g. www.example.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+                            </div>
+
+                            <!-- Attendance Days -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">Are you intending to attend for both days or one of the two days? <span class="text-rose-600">*</span></label>
+                                <p class="text-xs text-gray-600 mb-3">Tick both if you will attend two days or tick one if you will be attending one of the two days.</p>
+                                <div class="space-y-3">
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input v-model="form.attendance_days" type="checkbox" value="day1" class="w-4 h-4 text-emerald-600 rounded focus:ring-2 focus:ring-emerald-500" />
+                                        <span class="text-gray-700">Day 1 (13th February 2026)</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input v-model="form.attendance_days" type="checkbox" value="day2" class="w-4 h-4 text-emerald-600 rounded focus:ring-2 focus:ring-emerald-500" />
+                                        <span class="text-gray-700">Day 2 (14th February 2026)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Package -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">Choose a package <span class="text-rose-600">*</span></label>
+                                <p class="text-xs text-gray-600 mb-3">Payment must be completed to secure your delegate pass. Limited slots available.</p>
+                                <div class="space-y-3">
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input v-model="form.package" type="radio" value="diaspora_rate" class="w-4 h-4 text-emerald-600 focus:ring-2 focus:ring-emerald-500" />
+                                        <span class="text-gray-700 font-semibold">Diaspora Rate: AED 1,000</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Declaration -->
+                        <div class="border-t border-gray-200 pt-6">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input v-model="form.agree_terms" type="checkbox" class="w-4 h-4 text-emerald-600 rounded focus:ring-2 focus:ring-emerald-500 mt-1" required />
+                                <span class="text-sm text-gray-700">Agree to the conference's terms and conditions and the processing of your data. <span class="text-rose-600">*</span></span>
+                            </label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="pt-4 space-y-3">
+                            <button
+                                type="submit"
+                                class="w-full flex items-center justify-center gap-2 bg-emerald-600 text-white font-bold py-4 px-6 rounded-lg hover:bg-emerald-700 disabled:bg-emerald-400 disabled:cursor-not-allowed transition-colors duration-300 text-lg uppercase tracking-wide"
+                                :disabled="form.processing"
+                            >
+                                <span
+                                    v-if="form.processing"
+                                    class="inline-flex h-5 w-5 border-2 border-white/40 border-t-white rounded-full animate-spin"
+                                ></span>
+                                <span>{{ form.processing ? 'Submitting...' : 'Register' }}</span>
+                            </button>
+                            <p v-if="successMessage" class="text-center text-sm text-emerald-600 font-medium">
+                                {{ successMessage }}
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+        <Footer />
+    </div>
+</template>

@@ -1,0 +1,524 @@
+<script setup>
+import { ref, computed } from 'vue';
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import Dropdown from '@/Components/Dropdown.vue';
+import DropdownLink from '@/Components/DropdownLink.vue';
+import { Link, usePage } from '@inertiajs/vue3';
+
+const showingSidebar = ref(true);
+const showCmsMenu = ref(false);
+const showSettingsMenu = ref(false);
+const showFormsMenu = ref(false);
+
+const searchQuery = ref('');
+const showSearchResults = ref(false);
+
+const mockSearchResults = computed(() => {
+    if (!searchQuery.value.trim()) return [];
+
+    const base = [
+        'Forum registrations',
+        'UAE residents applications',
+        'Blog posts',
+        'Hero sections',
+        'Team members',
+    ];
+
+    return base.filter((item) =>
+        item.toLowerCase().includes(searchQuery.value.toLowerCase()),
+    );
+});
+
+const page = usePage();
+const user = computed(() => page.props.auth.user ?? {});
+const isAdmin = computed(() => user.value.role === 'admin');
+
+const userInitials = computed(() => {
+    if (!user.value.name) return '';
+    return user.value.name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase();
+});
+</script>
+
+<template>
+    <div class="min-h-screen bg-gray-100 flex">
+        <!-- Sidebar -->
+        <aside
+            class="hidden md:flex flex-col w-64 bg-emerald-900 text-white shadow-xl"
+        >
+            <div class="h-16 flex items-center px-6 border-b border-emerald-800">
+                <Link :href="route('dashboard')" class="flex items-center gap-3">
+                    <ApplicationLogo class="h-9 w-auto fill-current text-white" />
+                    <div class="flex flex-col leading-tight">
+                        <span class="text-sm font-semibold">Tanford Console</span>
+                        <span class="text-[11px] text-emerald-100">{{ isAdmin ? 'Administrator' : 'User workspace' }}</span>
+                    </div>
+                </Link>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto px-3 py-4 text-sm space-y-6">
+                <div>
+                    <p class="px-3 mb-2 text-[11px] uppercase tracking-wider text-emerald-200/70">Navigation</p>
+                    <ul class="space-y-1">
+                        <!-- Dashboard (common) -->
+                        <li>
+                            <Link
+                                :href="route('dashboard')"
+                                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium"
+                                :class="route().current('dashboard') ? 'bg-emerald-700 text-white' : 'text-emerald-100 hover:bg-emerald-800/70 hover:text-white'"
+                            >
+                                <span class="material-icons text-base">space_dashboard</span>
+                                <span>Dashboard</span>
+                            </Link>
+                        </li>
+
+                        <!-- Admin-specific navigation -->
+                        <template v-if="isAdmin">
+                            <li>
+                                <Link
+                                    :href="route('users.index')"
+                                    class="w-full flex items-center justify-between rounded-xl px-3 py-2 text-emerald-100 hover:bg-emerald-800/70"
+                                    :class="route().current('users.index') ? 'bg-emerald-800/80 text-white' : ''"
+                                >
+                                    <span class="flex items-center gap-3 text-sm">
+                                        <span class="material-icons text-base">group</span>
+                                        <span>Users & Roles</span>
+                                    </span>
+                                </Link>
+                            </li>
+
+                            <li>
+                                <button
+                                    type="button"
+                                    class="w-full flex items-center justify-between rounded-xl px-3 py-2 text-emerald-100 hover:bg-emerald-800/70 text-left"
+                                    @click="showFormsMenu = !showFormsMenu"
+                                >
+                                    <span class="flex items-center gap-3 text-sm">
+                                        <span class="material-icons text-base">description</span>
+                                        <span>Forms</span>
+                                    </span>
+                                    <span class="material-icons text-sm text-emerald-100">
+                                        {{ showFormsMenu ? 'expand_less' : 'expand_more' }}
+                                    </span>
+                                </button>
+
+                                <transition name="fade-slide">
+                                    <ul
+                                        v-if="showFormsMenu"
+                                        class="mt-1 space-y-0.5 pl-10 text-[12px] text-emerald-100/90"
+                                    >
+                                        <li>
+                                            <Link
+                                                :href="route('admin.forum-registrations.index')"
+                                                class="block w-full text-left py-1 hover:text-white"
+                                                :class="route().current('admin.forum-registrations.*') ? 'text-white font-semibold' : ''"
+                                            >
+                                                Forum
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link
+                                                :href="route('admin.uae-residents.index')"
+                                                class="block w-full text-left py-1 hover:text-white"
+                                                :class="route().current('admin.uae-residents.*') ? 'text-white font-semibold' : ''"
+                                            >
+                                                UAE Residents
+                                            </Link>
+                                        </li>
+                                    </ul>
+                                </transition>
+                            </li>
+
+                            <li>
+                                <button
+                                    type="button"
+                                    class="w-full flex items-center justify-between rounded-xl px-3 py-2 text-emerald-100 hover:bg-emerald-800/70 text-left"
+                                    @click="showCmsMenu = !showCmsMenu"
+                                >
+                                    <span class="flex items-center gap-3 text-sm">
+                                        <span class="material-icons text-base">web</span>
+                                        <span>CMS Management</span>
+                                    </span>
+                                    <span class="material-icons text-sm text-emerald-100">
+                                        {{ showCmsMenu ? 'expand_less' : 'expand_more' }}
+                                    </span>
+                                </button>
+
+                                <transition name="fade-slide">
+                                    <ul
+                                        v-if="showCmsMenu"
+                                        class="mt-1 space-y-0.5 pl-10 text-[12px] text-emerald-100/90"
+                                    >
+                                        <li>
+                                            <button type="button" class="w-full text-left py-1 hover:text-white">
+                                                Hero section
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <Link
+                                                :href="route('admin.footer.index')"
+                                                class="block w-full text-left py-1 hover:text-white"
+                                                :class="route().current('admin.footer.*') ? 'text-white font-semibold' : ''"
+                                            >
+                                                Footer
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link
+                                                :href="route('admin.notifications.index')"
+                                                class="block w-full text-left py-1 hover:text-white"
+                                                :class="route().current('admin.notifications.*') ? 'text-white font-semibold' : ''"
+                                            >
+                                                Notifications
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link
+                                                :href="route('admin.newsletter.index')"
+                                                class="block w-full text-left py-1 hover:text-white"
+                                                :class="route().current('admin.newsletter.*') ? 'text-white font-semibold' : ''"
+                                            >
+                                                Newsletter
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <button type="button" class="w-full text-left py-1 hover:text-white">
+                                                Team
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <Link
+                                                :href="route('admin.focus-areas.index')"
+                                                class="block w-full text-left py-1 hover:text-white"
+                                                :class="route().current('admin.focus-areas.*') ? 'text-white font-semibold' : ''"
+                                            >
+                                                Our Focus Areas
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link
+                                                :href="route('admin.about.index')"
+                                                class="block w-full text-left py-1 hover:text-white"
+                                                :class="route().current('admin.about.*') ? 'text-white font-semibold' : ''"
+                                            >
+                                                About Company
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link
+                                                :href="route('admin.services.index')"
+                                                class="block w-full text-left py-1 hover:text-white"
+                                                :class="route().current('admin.services.*') ? 'text-white font-semibold' : ''"
+                                            >
+                                                Services
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link
+                                                :href="route('admin.testimonials.index')"
+                                                class="block w-full text-left py-1 hover:text-white"
+                                                :class="route().current('admin.testimonials.*') ? 'text-white font-semibold' : ''"
+                                            >
+                                                Testimonials
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link
+                                                :href="route('admin.members.index')"
+                                                class="block w-full text-left py-1 hover:text-white"
+                                                :class="route().current('admin.members.*') ? 'text-white font-semibold' : ''"
+                                            >
+                                                Our Members
+                                            </Link>
+                                        </li>
+                                    </ul>
+                                </transition>
+                            </li>
+
+                            <li>
+                                <Link
+                                    :href="route('admin.posts.index')"
+                                    class="w-full flex items-center justify-between rounded-xl px-3 py-2 text-emerald-100 hover:bg-emerald-800/70"
+                                    :class="route().current('admin.posts.*') ? 'bg-emerald-800/80 text-white' : ''"
+                                >
+                                    <span class="flex items-center gap-3 text-sm">
+                                        <span class="material-icons text-base">article</span>
+                                        <span>Blog Management</span>
+                                    </span>
+                                </Link>
+                            </li>
+
+                            <li>
+                                <Link
+                                    :href="route('admin.media.index')"
+                                    class="w-full flex items-center justify-between rounded-xl px-3 py-2 text-emerald-100 hover:bg-emerald-800/70"
+                                    :class="route().current('admin.media.*') ? 'bg-emerald-800/80 text-white' : ''"
+                                >
+                                    <span class="flex items-center gap-3 text-sm">
+                                        <span class="material-icons text-base">collections</span>
+                                        <span>Media Gallery</span>
+                                    </span>
+                                </Link>
+                            </li>
+
+                            <li>
+                                <button
+                                    type="button"
+                                    class="w-full flex items-start justify-between rounded-xl px-3 py-2 text-emerald-100 hover:bg-emerald-800/70 text-left"
+                                    @click="showSettingsMenu = !showSettingsMenu"
+                                >
+                                    <span class="flex items-center gap-3 text-sm">
+                                        <span class="material-icons text-base">settings</span>
+                                        <span>Settings</span>
+                                    </span>
+                                    <span class="material-icons text-sm text-emerald-100">
+                                        {{ showSettingsMenu ? 'expand_less' : 'expand_more' }}
+                                    </span>
+                                </button>
+
+                                <transition name="fade-slide">
+                                    <ul
+                                        v-if="showSettingsMenu"
+                                        class="mt-1 space-y-0.5 pl-10 text-[12px] text-emerald-100/90"
+                                    >
+                                        <li>
+                                            <Link
+                                                :href="route('admin.settings.general')"
+                                                class="block w-full text-left py-1 hover:text-white"
+                                                :class="route().current('admin.settings.general*') ? 'text-white font-semibold' : ''"
+                                            >
+                                                General settings
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link
+                                                :href="route('admin.settings.mail')"
+                                                class="block w-full text-left py-1 hover:text-white"
+                                                :class="route().current('admin.settings.mail*') ? 'text-white font-semibold' : ''"
+                                            >
+                                                SMTP & email
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link
+                                                :href="route('admin.settings.seo')"
+                                                class="block w-full text-left py-1 hover:text-white"
+                                                :class="route().current('admin.settings.seo*') ? 'text-white font-semibold' : ''"
+                                            >
+                                                SEO
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link
+                                                :href="route('admin.settings.security')"
+                                                class="block w-full text-left py-1 hover:text-white"
+                                                :class="route().current('admin.settings.security*') ? 'text-white font-semibold' : ''"
+                                            >
+                                                Security
+                                            </Link>
+                                        </li>
+                                    </ul>
+                                </transition>
+                            </li>
+                        </template>
+
+                        <!-- Non-admin simple navigation -->
+                        <template v-else>
+                            <li>
+                                <button
+                                    type="button"
+                                    class="w-full flex items-center justify-between rounded-xl px-3 py-2 text-emerald-100 hover:bg-emerald-800/70"
+                                >
+                                    <span class="flex items-center gap-3 text-sm">
+                                        <span class="material-icons text-base">assignment</span>
+                                        <span>My Activities</span>
+                                    </span>
+                                </button>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+
+                <div>
+                    <p class="px-3 mb-2 text-[11px] uppercase tracking-wider text-emerald-200/70">Account</p>
+                    <ul class="space-y-1">
+                        <li>
+                            <Link
+                                :href="route('profile.edit')"
+                                class="flex items-center gap-3 rounded-xl px-3 py-2 text-emerald-100 hover:bg-emerald-800/70"
+                            >
+                                <span class="material-icons text-base">person</span>
+                                <span>Profile</span>
+                            </Link>
+                        </li>
+                        <li>
+                            <form @submit.prevent="$inertia.post(route('logout'))">
+                                <button
+                                    type="submit"
+                                    class="w-full flex items-center gap-3 rounded-xl px-3 py-2 text-emerald-100 hover:bg-emerald-800/70"
+                                >
+                                    <span class="material-icons text-base">logout</span>
+                                    <span>Logout</span>
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main content area -->
+        <div class="flex-1 flex flex-col min-h-screen">
+            <!-- Top bar -->
+            <header class="h-16 flex items-center justify-between px-4 md:px-8 bg-white border-b border-gray-100">
+                <div class="flex items-center gap-3">
+                    <button
+                        type="button"
+                        class="md:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100"
+                        @click="showingSidebar = !showingSidebar"
+                    >
+                        <span class="material-icons text-xl">menu</span>
+                    </button>
+                    <div>
+                        <h1 class="text-lg font-semibold text-gray-900">Dashboard</h1>
+                        <p class="text-xs text-gray-500">Welcome back, {{ user.name }}</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <!-- Search with suggestion dropdown (AJAX-style UI) -->
+                    <div class="hidden sm:block relative w-64 text-xs">
+                        <div class="flex items-center bg-gray-50 rounded-full px-3 py-1.5 text-gray-500">
+                            <span class="material-icons text-base me-1">search</span>
+                            <input
+                                type="text"
+                                v-model="searchQuery"
+                                placeholder="Search forms, pages, users..."
+                                class="bg-transparent border-0 focus:ring-0 text-xs flex-1 placeholder:text-gray-400"
+                                @focus="showSearchResults = true"
+                                @blur="setTimeout(() => (showSearchResults = false), 150)"
+                            />
+                        </div>
+
+                        <div
+                            v-if="showSearchResults && mockSearchResults.length"
+                            class="absolute mt-1 w-full bg-white rounded-xl shadow-lg border border-gray-100 z-20 overflow-hidden"
+                        >
+                            <ul class="py-1 max-h-52 overflow-y-auto">
+                                <li
+                                    v-for="item in mockSearchResults"
+                                    :key="item"
+                                    class="px-3 py-1.5 hover:bg-gray-50 cursor-pointer flex items-center gap-2 text-[11px] text-gray-700"
+                                >
+                                    <span class="material-icons text-xs text-gray-400">search</span>
+                                    <span>{{ item }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Notifications dropdown -->
+                    <Dropdown align="right" width="64">
+                        <template #trigger>
+                            <button type="button" class="relative inline-flex items-center justify-center rounded-full h-9 w-9 bg-gray-50 text-gray-500 hover:bg-gray-100">
+                                <span class="material-icons text-base">notifications</span>
+                                <span class="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">3</span>
+                            </button>
+                        </template>
+
+                        <template #content>
+                            <div class="px-3 py-2 border-b border-gray-100 flex items-center justify-between">
+                                <p class="text-[11px] font-semibold text-gray-700">Notifications</p>
+                                <span class="text-[10px] text-emerald-600 font-medium cursor-pointer">Mark all read</span>
+                            </div>
+                            <ul class="max-h-64 overflow-y-auto text-[11px]">
+                                <li class="px-3 py-2 flex items-start gap-2 hover:bg-gray-50">
+                                    <span class="mt-0.5 material-icons text-sm text-emerald-500">check_circle</span>
+                                    <div>
+                                        <p class="font-semibold text-gray-800">New forum registration</p>
+                                        <p class="text-gray-500">A user submitted the logistics forum form.</p>
+                                    </div>
+                                </li>
+                                <li class="px-3 py-2 flex items-start gap-2 hover:bg-gray-50">
+                                    <span class="mt-0.5 material-icons text-sm text-sky-500">group</span>
+                                    <div>
+                                        <p class="font-semibold text-gray-800">New member added</p>
+                                        <p class="text-gray-500">A team member was created in CMS.</p>
+                                    </div>
+                                </li>
+                                <li class="px-3 py-2 flex items-start gap-2 hover:bg-gray-50">
+                                    <span class="mt-0.5 material-icons text-sm text-amber-500">warning</span>
+                                    <div>
+                                        <p class="font-semibold text-gray-800">SMTP not configured</p>
+                                        <p class="text-gray-500">Update email settings in Settings &gt; SMTP.</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </template>
+                    </Dropdown>
+
+                    <!-- Account dropdown -->
+                    <Dropdown align="right" width="56">
+                        <template #trigger>
+                            <button
+                                type="button"
+                                class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-2 py-1 text-xs text-emerald-900 border border-emerald-100"
+                            >
+                                <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600 text-white text-xs font-semibold">
+                                    {{ userInitials }}
+                                </span>
+                                <span class="hidden sm:flex flex-col items-start leading-tight">
+                                    <span class="text-xs font-semibold">{{ user.name }}</span>
+                                    <span class="text-[11px] text-gray-500 capitalize">{{ user.role }}</span>
+                                </span>
+                                <span class="material-icons text-sm text-gray-400">expand_more</span>
+                            </button>
+                        </template>
+
+                        <template #content>
+                            <DropdownLink :href="route('profile.edit')">
+                                <div class="flex items-center gap-2 text-[12px]">
+                                    <span class="material-icons text-sm text-gray-400">person</span>
+                                    <span>Profile</span>
+                                </div>
+                            </DropdownLink>
+                            <DropdownLink href="/">
+                                <div class="flex items-center gap-2 text-[12px]">
+                                    <span class="material-icons text-sm text-gray-400">public</span>
+                                    <span>View site</span>
+                                </div>
+                            </DropdownLink>
+                            <DropdownLink :href="route('profile.edit')">
+                                <div class="flex items-center gap-2 text-[12px]">
+                                    <span class="material-icons text-sm text-gray-400">settings</span>
+                                    <span>Settings</span>
+                                </div>
+                            </DropdownLink>
+                            <DropdownLink
+                                :href="route('logout')"
+                                method="post"
+                                as="button"
+                            >
+                                <div class="flex items-center gap-2 text-[12px] text-red-600">
+                                    <span class="material-icons text-sm">logout</span>
+                                    <span>Log Out</span>
+                                </div>
+                            </DropdownLink>
+                        </template>
+                    </Dropdown>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <main class="flex-1 bg-gray-50">
+                <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+                    <slot />
+                </div>
+            </main>
+        </div>
+    </div>
+</template>

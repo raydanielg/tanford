@@ -1,0 +1,120 @@
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, router } from '@inertiajs/vue3';
+
+const props = defineProps({
+    residents: {
+        type: Array,
+        default: () => [],
+    },
+});
+
+const updateStatus = (resident, status) => {
+    if (!status || resident.status === status) return;
+
+    router.post(
+        route('admin.uae-residents.update-status', resident.id),
+        { status },
+        {
+            preserveScroll: true,
+            preserveState: true,
+        },
+    );
+};
+</script>
+
+<template>
+    <AuthenticatedLayout>
+        <Head title="UAE Resident registrations" />
+        <div class="space-y-6">
+            <div
+                class="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+            >
+                <div>
+                    <h1 class="text-lg font-semibold text-gray-900">UAE Residents</h1>
+                    <p class="text-[11px] text-gray-500 mt-1">
+                        Submissions from the UAE residents diaspora registration form.
+                    </p>
+                </div>
+                <div class="text-[11px] text-gray-500">
+                    <span class="font-semibold text-emerald-700">{{ props.residents.length }}</span>
+                    registrations
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-gray-100 p-5 text-xs overflow-x-auto">
+                <table class="min-w-full text-left">
+                    <thead>
+                        <tr class="border-b border-gray-100 text-[11px] text-gray-500">
+                            <th class="py-2 px-3 font-medium">Name</th>
+                            <th class="py-2 px-3 font-medium">Email</th>
+                            <th class="py-2 px-3 font-medium">Phone</th>
+                            <th class="py-2 px-3 font-medium">City</th>
+                            <th class="py-2 px-3 font-medium">Country</th>
+                            <th class="py-2 px-3 font-medium">Nationality</th>
+                            <th class="py-2 px-3 font-medium">Package</th>
+                            <th class="py-2 px-3 font-medium">Status</th>
+                            <th class="py-2 px-3 font-medium">Created</th>
+                            <th class="py-2 px-3 font-medium text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            v-for="resident in props.residents"
+                            :key="resident.id"
+                            class="border-b border-gray-50 hover:bg-gray-50/60"
+                        >
+                            <td class="py-2 px-3 text-[11px] text-gray-900">{{ resident.name }}</td>
+                            <td class="py-2 px-3 text-[11px] text-emerald-700">{{ resident.email }}</td>
+                            <td class="py-2 px-3 text-[11px] text-gray-700">{{ resident.phone || '-' }}</td>
+                            <td class="py-2 px-3 text-[11px] text-gray-700">{{ resident.city || '-' }}</td>
+                            <td class="py-2 px-3 text-[11px] text-gray-700">{{ resident.country || '-' }}</td>
+                            <td class="py-2 px-3 text-[11px] text-gray-700">{{ resident.nationality || '-' }}</td>
+                            <td class="py-2 px-3 text-[11px] text-gray-700">{{ resident.package || '-' }}</td>
+                            <td class="py-2 px-3 text-[11px]">
+                                <span
+                                    class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium"
+                                    :class="{
+                                        'bg-yellow-100 text-yellow-800': !resident.status || resident.status === 'pending',
+                                        'bg-emerald-100 text-emerald-800': resident.status === 'approved',
+                                        'bg-rose-100 text-rose-800': resident.status === 'rejected',
+                                    }"
+                                >
+                                    {{ resident.status || 'pending' }}
+                                </span>
+                            </td>
+                            <td class="py-2 px-3 text-[11px] text-gray-500">
+                                {{ new Date(resident.created_at).toLocaleString() }}
+                            </td>
+                            <td class="py-2 px-3 text-[11px] text-right">
+                                <div class="flex gap-1 justify-end">
+                                    <button
+                                        type="button"
+                                        class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] border border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 disabled:opacity-60 disabled:cursor-default"
+                                        :disabled="resident.status === 'approved'"
+                                        @click="updateStatus(resident, 'approved')"
+                                    >
+                                        <span class="material-icons text-[13px]">check_circle</span>
+                                        <span>Approve</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] border border-rose-200 text-rose-700 bg-rose-50 hover:bg-rose-100 disabled:opacity-60 disabled:cursor-default"
+                                        :disabled="resident.status === 'rejected'"
+                                        @click="updateStatus(resident, 'rejected')"
+                                    >
+                                        <span class="material-icons text-[13px]">cancel</span>
+                                        <span>Reject</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr v-if="!props.residents.length">
+                            <td colspan="10" class="py-6 text-center text-[11px] text-gray-500">No registrations yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </AuthenticatedLayout>
+</template>
