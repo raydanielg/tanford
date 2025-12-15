@@ -11,10 +11,18 @@ const props = defineProps({
 });
 
 const selectedUser = ref(null);
+const createModalOpen = ref(false);
 const roleModalOpen = ref(false);
 const passwordModalOpen = ref(false);
 const banModalOpen = ref(false);
 const deleteModalOpen = ref(false);
+
+const createForm = useForm({
+    name: '',
+    email: '',
+    password: '',
+    role: 'user',
+});
 
 const roleForm = useForm({
     role: 'user',
@@ -23,6 +31,21 @@ const roleForm = useForm({
 const passwordForm = useForm({});
 const banForm = useForm({});
 const deleteForm = useForm({});
+
+const openCreateModal = () => {
+    createForm.reset();
+    createForm.role = 'user';
+    createModalOpen.value = true;
+};
+
+const submitCreate = () => {
+    createForm.post(route('users.store'), {
+        onSuccess: () => {
+            createModalOpen.value = false;
+            createForm.reset();
+        },
+    });
+};
 
 const openRoleModal = (user) => {
     selectedUser.value = user;
@@ -95,12 +118,20 @@ const userCount = computed(() => props.users.length);
                     <h1 class="text-lg font-semibold text-gray-900">Users &amp; Roles</h1>
                     <p class="text-[11px] text-gray-500 mt-1">Manage access to the Tanford console.</p>
                 </div>
-                <div class="flex gap-3 text-[11px]">
+                <div class="flex items-center gap-3 text-[11px]">
                     <div class="px-3 py-2 rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center gap-2">
                         <span class="material-icons text-sm">group</span>
                         <span class="font-semibold">{{ userCount }}</span>
                         <span class="text-emerald-800/80">users</span>
                     </div>
+                    <button
+                        type="button"
+                        class="inline-flex items-center gap-1 rounded-full bg-emerald-600 px-3 py-1.5 text-[11px] font-semibold text-white hover:bg-emerald-700"
+                        @click="openCreateModal"
+                    >
+                        <span class="material-icons text-[13px]">person_add</span>
+                        <span>New user</span>
+                    </button>
                 </div>
             </div>
 
@@ -203,6 +234,88 @@ const userCount = computed(() => props.users.length);
 
             <!-- Modals -->
 
+            <!-- Create user modal -->
+            <div
+                v-if="createModalOpen"
+                class="fixed inset-0 z-40 flex items-center justify-center bg-black/40"
+            >
+                <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5">
+                    <h3 class="text-sm font-semibold text-gray-900 mb-2">Create user</h3>
+                    <p class="text-[11px] text-gray-500 mb-3">
+                        Add a new user and choose whether they are an <span class="font-semibold">admin</span> or regular <span class="font-semibold">user</span>.
+                    </p>
+                    <div class="space-y-3 text-xs">
+                        <div>
+                            <label class="block mb-1 text-gray-700">Name</label>
+                            <input
+                                v-model="createForm.name"
+                                type="text"
+                                class="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:border-emerald-500 focus:ring-emerald-500"
+                            />
+                            <p v-if="createForm.errors.name" class="mt-1 text-[10px] text-red-600">
+                                {{ createForm.errors.name }}
+                            </p>
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-gray-700">Email</label>
+                            <input
+                                v-model="createForm.email"
+                                type="email"
+                                class="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:border-emerald-500 focus:ring-emerald-500"
+                            />
+                            <p v-if="createForm.errors.email" class="mt-1 text-[10px] text-red-600">
+                                {{ createForm.errors.email }}
+                            </p>
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-gray-700">Password</label>
+                            <input
+                                v-model="createForm.password"
+                                type="password"
+                                class="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:border-emerald-500 focus:ring-emerald-500"
+                                placeholder="Min 8 characters"
+                            />
+                            <p v-if="createForm.errors.password" class="mt-1 text-[10px] text-red-600">
+                                {{ createForm.errors.password }}
+                            </p>
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-gray-700">Role</label>
+                            <select
+                                v-model="createForm.role"
+                                class="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:border-emerald-500 focus:ring-emerald-500"
+                            >
+                                <option value="user">User</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                            <p v-if="createForm.errors.role" class="mt-1 text-[10px] text-red-600">
+                                {{ createForm.errors.role }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-2 mt-5 text-[11px]">
+                        <button
+                            class="px-3 py-1.5 rounded-full bg-gray-50 border border-gray-200 text-gray-600 hover:bg-gray-100"
+                            type="button"
+                            @click="createModalOpen = false"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            class="px-3 py-1.5 rounded-full bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 flex items-center gap-2"
+                            type="button"
+                            :disabled="createForm.processing"
+                            @click="submitCreate"
+                        >
+                            <span
+                                v-if="createForm.processing"
+                                class="w-3 h-3 border-2 border-white/70 border-t-transparent rounded-full animate-spin"
+                            ></span>
+                            <span>Create user</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
             <!-- Edit role modal -->
             <div
                 v-if="roleModalOpen && selectedUser"

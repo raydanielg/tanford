@@ -52,7 +52,7 @@ const openEditModal = (member) => {
 const submitEdit = () => {
     if (!selectedMember.value) return;
 
-    memberForm.post(route('admin.members.update', selectedMember.value.id), {
+    memberForm.put(route('admin.members.update', selectedMember.value.id), {
         preserveScroll: true,
         forceFormData: true,
         onSuccess: () => {
