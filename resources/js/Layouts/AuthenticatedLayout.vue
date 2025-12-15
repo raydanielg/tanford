@@ -186,9 +186,13 @@ const userInitials = computed(() => {
                                             </Link>
                                         </li>
                                         <li>
-                                            <button type="button" class="w-full text-left py-1 hover:text-white">
+                                            <Link
+                                                :href="route('admin.team-members.index')"
+                                                class="block w-full text-left py-1 hover:text-white"
+                                                :class="route().current('admin.team-members.*') ? 'text-white font-semibold' : ''"
+                                            >
                                                 Team
-                                            </button>
+                                            </Link>
                                         </li>
                                         <li>
                                             <Link

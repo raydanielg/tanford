@@ -23,6 +23,7 @@ use App\Http\Controllers\UaeResidentController;
 use App\Http\Controllers\Admin\PostController as AdminPostController;
 use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
 use App\Http\Controllers\Admin\MemberOrganizationController as AdminMemberController;
+use App\Http\Controllers\Admin\TeamMemberController as AdminTeamMemberController;
 use App\Http\Controllers\Admin\MediaItemController as AdminMediaController;
 use App\Http\Controllers\Admin\AboutBlockController as AdminAboutController;
 use App\Http\Controllers\Admin\ServiceController as AdminServiceController;
@@ -165,6 +166,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/admin/testimonials', [AdminTestimonialController::class, 'store'])->name('admin.testimonials.store');
     Route::put('/admin/testimonials/{testimonial}', [AdminTestimonialController::class, 'update'])->name('admin.testimonials.update');
     Route::delete('/admin/testimonials/{testimonial}', [AdminTestimonialController::class, 'destroy'])->name('admin.testimonials.destroy');
+
+    // Admin team members management
+    Route::get('/admin/team-members', [AdminTeamMemberController::class, 'index'])->name('admin.team-members.index');
+    Route::post('/admin/team-members', [AdminTeamMemberController::class, 'store'])->name('admin.team-members.store');
+    Route::post('/admin/team-members/{teamMember}', [AdminTeamMemberController::class, 'update'])->name('admin.team-members.update');
+    Route::delete('/admin/team-members/{teamMember}', [AdminTeamMemberController::class, 'destroy'])->name('admin.team-members.destroy');
 
     // Admin members management
     Route::get('/admin/members', [AdminMemberController::class, 'index'])->name('admin.members.index');
