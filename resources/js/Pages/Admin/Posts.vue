@@ -209,13 +209,13 @@ const postCount = computed(() => props.posts.length);
                                 </td>
                                 <td class="py-2.5 px-3 text-[11px] text-right">
                                     <div class="inline-flex items-center gap-1">
-                                        <Link
-                                            :href="route('admin.posts.edit', post.id)"
+                                        <button
                                             class="px-2 py-1 rounded-full bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100 flex items-center gap-1"
+                                            @click="openEditModal(post)"
                                         >
                                             <span class="material-icons text-[12px]">edit</span>
                                             <span>Edit</span>
-                                        </Link>
+                                        </button>
                                         <button
                                             class="px-2 py-1 rounded-full bg-red-50 border border-red-100 text-red-600 hover:bg-red-100 flex items-center gap-1"
                                             @click="openDeleteModal(post)"
