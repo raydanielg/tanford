@@ -230,7 +230,8 @@ class ImportForminatorForum extends Command
             $registration->other_services = null;
             $registration->attendance_days = $attendanceDays;
             $registration->booth = null;
-            $registration->sponsorship_package = $package;
+            // Column is NOT NULL in MySQL; default to empty string when no package selected
+            $registration->sponsorship_package = $package ?? '';
             $registration->agree_terms = $agreeTerms;
             $registration->status = 'pending';
 
