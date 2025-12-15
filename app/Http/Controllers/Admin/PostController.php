@@ -105,6 +105,27 @@ class PostController extends Controller
         return redirect()->back();
     }
 
+    public function edit(Request $request, Post $post): Response
+    {
+        $this->ensureAdmin();
+
+        return Inertia::render('Admin/PostEdit', [
+            'post' => [
+                'id' => $post->id,
+                'title' => $post->title,
+                'slug' => $post->slug,
+                'category' => $post->category,
+                'author_name' => $post->author_name,
+                'image_url' => $post->image_url,
+                'excerpt' => $post->excerpt,
+                'body' => $post->body,
+                'published_at' => $post->published_at,
+                'created_at' => $post->created_at,
+                'updated_at' => $post->updated_at,
+            ],
+        ]);
+    }
+
     public function update(Request $request, $postId): RedirectResponse
     {
         $this->ensureAdmin();
