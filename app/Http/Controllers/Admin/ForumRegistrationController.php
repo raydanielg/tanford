@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ForumRegistration;
 use App\Exports\ForumRegistrationsExport;
+use App\Mail\ForumRegistrationApproved;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Inertia\Inertia;
@@ -68,8 +70,16 @@ class ForumRegistrationController extends Controller
             'status' => ['required', 'string', 'in:pending,approved,rejected'],
         ]);
 
-        $registration->status = request('status');
+        $oldStatus = $registration->status;
+        $newStatus = request('status');
+
+        $registration->status = $newStatus;
         $registration->save();
+
+        if ($oldStatus !== 'approved' && $newStatus === 'approved') {
+            Mail::to($registration->email)
+                ->send(new ForumRegistrationApproved($registration));
+        }
 
         return back();
     }

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\ForumRegistration;
+use App\Mail\ForumRegistrationNotification;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Mail;
 
 class ForumRegistrationController extends Controller
 {
@@ -41,7 +43,10 @@ class ForumRegistrationController extends Controller
 
         $data['status'] = 'pending';
 
-        ForumRegistration::create($data);
+        $registration = ForumRegistration::create($data);
+
+        Mail::to(config('mail.notification_email', 'Forum@tanforduae.com'))
+            ->send(new ForumRegistrationNotification($registration));
 
         return back()->with('success', 'Thank you for registering for the forum.');
     }

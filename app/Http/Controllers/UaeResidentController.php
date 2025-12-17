@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\UaeResident;
+use App\Mail\UaeResidentNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class UaeResidentController extends Controller
 {
@@ -33,7 +35,10 @@ class UaeResidentController extends Controller
         $payload['attendance_days'] = $data['attendance_days'] ?? [];
         $payload['status'] = 'pending';
 
-        UaeResident::create($payload);
+        $resident = UaeResident::create($payload);
+
+        Mail::to(config('mail.notification_email', 'Forum@tanforduae.com'))
+            ->send(new UaeResidentNotification($resident));
 
         return back()->with('success', 'Thank you for registering as a UAE resident attendee.');
     }

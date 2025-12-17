@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\UaeResident;
 use App\Exports\UaeResidentsExport;
+use App\Mail\UaeResidentApproved;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Inertia\Inertia;
@@ -56,8 +58,16 @@ class UaeResidentController extends Controller
             'status' => ['required', 'string', 'in:pending,approved,rejected'],
         ]);
 
-        $resident->status = request('status');
+        $oldStatus = $resident->status;
+        $newStatus = request('status');
+
+        $resident->status = $newStatus;
         $resident->save();
+
+        if ($oldStatus !== 'approved' && $newStatus === 'approved') {
+            Mail::to($resident->email)
+                ->send(new UaeResidentApproved($resident));
+        }
 
         return back();
     }
