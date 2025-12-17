@@ -82,24 +82,22 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    slides: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const currentSlide = ref(0);
 const currentNotificationIndex = ref(0);
 let autoTimer = null;
 
-const slides = [
+const fallbackSlides = [
     {
         title: 'ONE NETWORK. ONE VISION. ONE TANFORD',
         badge: 'Tanzania Freight Forwarders Association (Dubai & Tanzania)',
         description:
             'Connecting freight forwarders and logistics professionals to build a stronger trade bridge between Tanzania and the UAE/GCC region.'
-    },
-    {
-        title: 'Build, Protect, and Grow Your Digital Presence',
-        badge: 'Leading IT & Cybersecurity Solutions in Tanzania',
-        description:
-            'Secure your business, protect your data, and expand your digital footprint with modern cybersecurity and IT solutions.'
     },
     {
         title: 'Empower Your Global Trade Network',
@@ -109,15 +107,25 @@ const slides = [
     }
 ];
 
+const slides = computed(() => {
+    return props.slides && props.slides.length
+        ? props.slides
+        : fallbackSlides;
+});
+
 const nextSlide = () => {
-    currentSlide.value = (currentSlide.value + 1) % slides.length;
+    const total = slides.value.length;
+    if (!total) return;
+    currentSlide.value = (currentSlide.value + 1) % total;
     if (props.notifications && props.notifications.length) {
         currentNotificationIndex.value = (currentNotificationIndex.value + 1) % props.notifications.length;
     }
 };
 
 const prevSlide = () => {
-    currentSlide.value = (currentSlide.value - 1 + slides.length) % slides.length;
+    const total = slides.value.length;
+    if (!total) return;
+    currentSlide.value = (currentSlide.value - 1 + total) % total;
 };
 
 const currentNotification = computed(() => {

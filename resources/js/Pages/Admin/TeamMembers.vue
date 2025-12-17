@@ -23,6 +23,8 @@ const memberForm = useForm({
     photo_url: '',
     facebook_url: '',
     twitter_url: '',
+    instagram_url: '',
+    linkedin_url: '',
 });
 
 const photoPreview = ref('');
@@ -57,6 +59,8 @@ const openEditModal = (item) => {
     memberForm.photo_url = item.photo_url || '';
     memberForm.facebook_url = item.facebook_url || '';
     memberForm.twitter_url = item.twitter_url || '';
+    memberForm.instagram_url = item.instagram_url || '';
+    memberForm.linkedin_url = item.linkedin_url || '';
     photoPreview.value = item.photo_url || '';
     editModalOpen.value = true;
 };
@@ -196,7 +200,14 @@ const memberCount = computed(() => props.teamMembers.length);
                                     </p>
                                 </td>
                                 <td class="py-2.5 px-3 text-[11px] text-gray-600">
-                                    <div class="flex items-center gap-2">
+                                    <div class="flex flex-wrap items-center gap-1.5">
+                                        <span
+                                            v-if="item.instagram_url"
+                                            class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-pink-50 text-[10px] text-pink-700 border border-pink-100"
+                                        >
+                                            <span class="material-icons text-[13px]">photo_camera</span>
+                                            <span>Instagram</span>
+                                        </span>
                                         <span
                                             v-if="item.facebook_url"
                                             class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-[10px] text-blue-700 border border-blue-100"
@@ -205,13 +216,25 @@ const memberCount = computed(() => props.teamMembers.length);
                                             <span>Facebook</span>
                                         </span>
                                         <span
-                                            v-if="item.twitter_url"
+                                            v-if="item.linkedin_url"
                                             class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-sky-50 text-[10px] text-sky-700 border border-sky-100"
                                         >
-                                            <span class="material-icons text-[13px]">alternate_email</span>
-                                            <span>Twitter/X</span>
+                                            <span class="material-icons text-[13px]">business_center</span>
+                                            <span>LinkedIn</span>
                                         </span>
-                                        <span v-if="!item.facebook_url && !item.twitter_url" class="text-[10px] text-gray-400">None</span>
+                                        <span
+                                            v-if="item.twitter_url"
+                                            class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-50 text-[10px] text-slate-700 border border-slate-100"
+                                        >
+                                            <span class="material-icons text-[13px]">alternate_email</span>
+                                            <span>Twitter</span>
+                                        </span>
+                                        <span
+                                            v-if="!item.instagram_url && !item.facebook_url && !item.linkedin_url && !item.twitter_url"
+                                            class="text-[10px] text-gray-400"
+                                        >
+                                            None
+                                        </span>
                                     </div>
                                 </td>
                                 <td class="py-2.5 px-3 text-[11px] text-gray-500 whitespace-nowrap">
@@ -318,6 +341,15 @@ const memberCount = computed(() => props.teamMembers.length);
 
                         <div class="grid grid-cols-2 gap-3">
                             <div>
+                                <label class="block mb-1 text-gray-700 text-[11px]">Instagram URL</label>
+                                <input
+                                    v-model="memberForm.instagram_url"
+                                    type="url"
+                                    class="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:border-emerald-500 focus:ring-emerald-500"
+                                    placeholder="https://instagram.com/..."
+                                />
+                            </div>
+                            <div>
                                 <label class="block mb-1 text-gray-700 text-[11px]">Facebook URL</label>
                                 <input
                                     v-model="memberForm.facebook_url"
@@ -326,13 +358,25 @@ const memberCount = computed(() => props.teamMembers.length);
                                     placeholder="https://facebook.com/..."
                                 />
                             </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block mb-1 text-gray-700 text-[11px]">Twitter / X URL</label>
+                                <label class="block mb-1 text-gray-700 text-[11px]">LinkedIn URL</label>
+                                <input
+                                    v-model="memberForm.linkedin_url"
+                                    type="url"
+                                    class="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:border-emerald-500 focus:ring-emerald-500"
+                                    placeholder="https://linkedin.com/in/..."
+                                />
+                            </div>
+                            <div>
+                                <label class="block mb-1 text-gray-700 text-[11px]">Twitter URL</label>
                                 <input
                                     v-model="memberForm.twitter_url"
                                     type="url"
                                     class="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:border-emerald-500 focus:ring-emerald-500"
-                                    placeholder="https://x.com/..."
+                                    placeholder="https://twitter.com/..."
                                 />
                             </div>
                         </div>

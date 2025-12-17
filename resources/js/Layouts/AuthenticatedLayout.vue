@@ -154,9 +154,13 @@ const userInitials = computed(() => {
                                         class="mt-1 space-y-0.5 pl-10 text-[12px] text-emerald-100/90"
                                     >
                                         <li>
-                                            <button type="button" class="w-full text-left py-1 hover:text-white">
+                                            <Link
+                                                :href="route('admin.hero.index')"
+                                                class="block w-full text-left py-1 hover:text-white"
+                                                :class="route().current('admin.hero.*') ? 'text-white font-semibold' : ''"
+                                            >
                                                 Hero section
-                                            </button>
+                                            </Link>
                                         </li>
                                         <li>
                                             <Link

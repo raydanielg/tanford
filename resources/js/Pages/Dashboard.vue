@@ -1,6 +1,25 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { computed } from 'vue';
+
+const props = defineProps({
+    dashboard: {
+        type: Object,
+        default: () => ({ stats: {}, recentActivity: {} }),
+    },
+});
+
+const stats = computed(() => props.dashboard.stats || {});
+const recentActivity = computed(() => props.dashboard.recentActivity || {});
+
+const refresh = () => {
+    router.get(route('dashboard'), {}, {
+        only: ['dashboard'],
+        preserveScroll: true,
+        preserveState: true,
+    });
+};
 </script>
 
 <template>
@@ -8,50 +27,68 @@ import { Head } from '@inertiajs/vue3';
 
     <AuthenticatedLayout>
         <div class="space-y-6">
+            <!-- Header with refresh -->
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-lg font-semibold text-gray-900">Site overview</h1>
+                    <p class="text-xs text-gray-500">High-level summary of Tanford site activity and key forms.</p>
+                </div>
+                <button
+                    type="button"
+                    class="inline-flex items-center gap-1 rounded-full border border-gray-200 px-3 py-1.5 text-[11px] font-medium text-gray-700 hover:bg-gray-50"
+                    @click="refresh"
+                >
+                    <span class="material-icons text-[14px]">refresh</span>
+                    <span>Refresh data</span>
+                </button>
+            </div>
+
             <!-- Top stats cards -->
             <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
                 <div class="bg-white rounded-2xl border border-gray-100 p-4 flex flex-col gap-2">
-                    <p class="text-[11px] font-medium text-gray-500">Total Items</p>
+                    <p class="text-[11px] font-medium text-gray-500">Users</p>
                     <div class="flex items-end justify-between">
-                        <p class="text-2xl font-bold text-gray-900">24</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ stats.users ?? 0 }}</p>
                         <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                            <span class="material-icons text-xl">insights</span>
+                            <span class="material-icons text-xl">group</span>
                         </span>
                     </div>
-                    <p class="text-[11px] text-emerald-600">+2 this month</p>
+                    <p class="text-[11px] text-gray-400">Total registered users</p>
                 </div>
 
                 <div class="bg-white rounded-2xl border border-gray-100 p-4 flex flex-col gap-2">
-                    <p class="text-[11px] font-medium text-gray-500">Completed</p>
+                    <p class="text-[11px] font-medium text-gray-500">Content (blog & media)</p>
                     <div class="flex items-end justify-between">
-                        <p class="text-2xl font-bold text-gray-900">18</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ (stats.posts ?? 0) + (stats.media ?? 0) }}</p>
                         <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-sky-50 text-sky-500">
-                            <span class="material-icons text-xl">task_alt</span>
+                            <span class="material-icons text-xl">library_books</span>
                         </span>
                     </div>
-                    <p class="text-[11px] text-sky-600">75% completion</p>
+                    <p class="text-[11px] text-gray-400">
+                        {{ stats.posts ?? 0 }} blog posts · {{ stats.media ?? 0 }} media items
+                    </p>
                 </div>
 
                 <div class="bg-white rounded-2xl border border-gray-100 p-4 flex flex-col gap-2">
-                    <p class="text-[11px] font-medium text-gray-500">Pending</p>
+                    <p class="text-[11px] font-medium text-gray-500">Forum registrations</p>
                     <div class="flex items-end justify-between">
-                        <p class="text-2xl font-bold text-gray-900">6</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ stats.forum?.total ?? 0 }}</p>
                         <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-500">
-                            <span class="material-icons text-xl">schedule</span>
+                            <span class="material-icons text-xl">event</span>
                         </span>
                     </div>
-                    <p class="text-[11px] text-amber-600">25% remaining</p>
+                    <p class="text-[11px] text-amber-600">{{ stats.forum?.pending ?? 0 }} pending review</p>
                 </div>
 
                 <div class="bg-white rounded-2xl border border-gray-100 p-4 flex flex-col gap-2">
-                    <p class="text-[11px] font-medium text-gray-500">Avg Score</p>
+                    <p class="text-[11px] font-medium text-gray-500">UAE Residents forms</p>
                     <div class="flex items-end justify-between">
-                        <p class="text-2xl font-bold text-gray-900">85%</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ stats.uae?.total ?? 0 }}</p>
                         <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-purple-50 text-purple-500">
-                            <span class="material-icons text-xl">bolt</span>
+                            <span class="material-icons text-xl">flight_takeoff</span>
                         </span>
                     </div>
-                    <p class="text-[11px] text-purple-600">+5% improvement</p>
+                    <p class="text-[11px] text-purple-600">{{ stats.uae?.pending ?? 0 }} pending approval</p>
                 </div>
             </div>
 
@@ -60,88 +97,119 @@ import { Head } from '@inertiajs/vue3';
                 <div class="bg-white rounded-2xl border border-gray-100 p-5 lg:col-span-2">
                     <div class="flex items-center justify-between mb-4">
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-900">Recent Activity</h3>
-                            <p class="text-[11px] text-gray-500">Overview of your latest items</p>
+                            <h3 class="text-sm font-semibold text-gray-900">Recent activity</h3>
+                            <p class="text-[11px] text-gray-500">Latest submissions from key forms.</p>
                         </div>
-                        <button class="text-xs font-semibold text-emerald-600 hover:text-emerald-700">View all</button>
                     </div>
 
                     <div class="space-y-3">
-                        <div class="flex items-center justify-between rounded-xl border border-gray-100 px-4 py-3 hover:bg-gray-50">
+                        <div
+                            v-for="item in recentActivity.forum || []"
+                            :key="`forum-${item.id}`"
+                            class="flex items-center justify-between rounded-xl border border-gray-100 px-4 py-3 hover:bg-gray-50"
+                        >
                             <div class="flex items-center gap-3">
                                 <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
                                     <span class="material-icons text-xl">description</span>
                                 </span>
                                 <div>
-                                    <p class="text-sm font-medium text-gray-900">Mathematics Final Exam</p>
-                                    <p class="text-[11px] text-gray-500">Completed on Dec 5, 2025</p>
+                                    <p class="text-sm font-medium text-gray-900">
+                                        Forum: {{ item.forum_name || 'Tanzania Global Logistics Forum' }}
+                                    </p>
+                                    <p class="text-[11px] text-gray-500">
+                                        {{ item.name }} · {{ item.email }} ·
+                                        <span class="capitalize">{{ item.status || 'pending' }}</span>
+                                    </p>
                                 </div>
                             </div>
-                            <div class="text-right">
-                                <p class="text-xs font-semibold text-emerald-600">92% Passed</p>
+                            <div class="text-right text-[11px] text-gray-500">
+                                {{ new Date(item.created_at).toLocaleString() }}
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between rounded-xl border border-gray-100 px-4 py-3 hover:bg-gray-50">
+                        <div
+                            v-for="item in recentActivity.uae || []"
+                            :key="`uae-${item.id}`"
+                            class="flex items-center justify-between rounded-xl border border-gray-100 px-4 py-3 hover:bg-gray-50"
+                        >
                             <div class="flex items-center gap-3">
                                 <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-sky-50 text-sky-500">
-                                    <span class="material-icons text-xl">menu_book</span>
+                                    <span class="material-icons text-xl">person_pin_circle</span>
                                 </span>
                                 <div>
-                                    <p class="text-sm font-medium text-gray-900">English Literature Test</p>
-                                    <p class="text-[11px] text-gray-500">Completed on Dec 3, 2025</p>
+                                    <p class="text-sm font-medium text-gray-900">
+                                        UAE Resident: {{ item.name }}
+                                    </p>
+                                    <p class="text-[11px] text-gray-500">
+                                        {{ item.email }}
+                                        <span v-if="item.city" class="mx-1">·</span>
+                                        <span v-if="item.city">{{ item.city }}</span>
+                                        · <span class="capitalize">{{ item.status || 'pending' }}</span>
+                                    </p>
                                 </div>
                             </div>
-                            <div class="text-right">
-                                <p class="text-xs font-semibold text-sky-600">88% Passed</p>
+                            <div class="text-right text-[11px] text-gray-500">
+                                {{ new Date(item.created_at).toLocaleString() }}
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between rounded-xl border border-gray-100 px-4 py-3 hover:bg-gray-50">
-                            <div class="flex items-center gap-3">
-                                <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-500">
-                                    <span class="material-icons text-xl">science</span>
-                                </span>
-                                <div>
-                                    <p class="text-sm font-medium text-gray-900">Physics Midterm Exam</p>
-                                    <p class="text-[11px] text-gray-500">In progress</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs font-semibold text-amber-600">45% In progress</p>
-                            </div>
-                        </div>
+                        <p
+                            v-if="!(recentActivity.forum && recentActivity.forum.length) && !(recentActivity.uae && recentActivity.uae.length)"
+                            class="text-[11px] text-gray-500 text-center py-4"
+                        >
+                            No recent activity yet.
+                        </p>
                     </div>
                 </div>
 
                 <!-- Quick actions -->
                 <div class="space-y-4">
                     <div class="bg-white rounded-2xl border border-gray-100 p-5">
-                        <h3 class="text-sm font-semibold text-gray-900 mb-3">Quick Actions</h3>
-                        <div class="space-y-3">
-                            <button class="w-full inline-flex items-center justify-between rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 text-xs font-semibold">
+                        <h3 class="text-sm font-semibold text-gray-900 mb-3">Quick actions</h3>
+                        <div class="space-y-3 text-xs">
+                            <Link
+                                :href="route('admin.forum-registrations.index')"
+                                class="w-full inline-flex items-center justify-between rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 font-semibold"
+                            >
                                 <span class="flex items-center gap-2">
-                                    <span class="material-icons text-base">add_circle</span>
-                                    <span>Start New Exam</span>
+                                    <span class="material-icons text-base">event</span>
+                                    <span>View forum registrations</span>
                                 </span>
                                 <span class="material-icons text-sm">chevron_right</span>
-                            </button>
+                            </Link>
 
-                            <button class="w-full inline-flex items-center justify-between rounded-xl border border-gray-200 px-4 py-2.5 text-xs font-semibold text-gray-700 hover:bg-gray-50">
+                            <Link
+                                :href="route('admin.uae-residents.index')"
+                                class="w-full inline-flex items-center justify-between rounded-xl border border-gray-200 px-4 py-2.5 font-semibold text-gray-700 hover:bg-gray-50"
+                            >
                                 <span class="flex items-center gap-2">
-                                    <span class="material-icons text-base">analytics</span>
-                                    <span>View Results</span>
+                                    <span class="material-icons text-base">flight_takeoff</span>
+                                    <span>View UAE residents forms</span>
                                 </span>
                                 <span class="material-icons text-sm">chevron_right</span>
-                            </button>
+                            </Link>
 
-                            <button class="w-full inline-flex items-center justify-between rounded-xl border border-gray-200 px-4 py-2.5 text-xs font-semibold text-gray-700 hover:bg-gray-50">
+                            <Link
+                                :href="route('users.index')"
+                                class="w-full inline-flex items-center justify-between rounded-xl border border-gray-200 px-4 py-2.5 font-semibold text-gray-700 hover:bg-gray-50"
+                            >
                                 <span class="flex items-center gap-2">
-                                    <span class="material-icons text-base">tune</span>
-                                    <span>Settings</span>
+                                    <span class="material-icons text-base">group</span>
+                                    <span>Manage users & roles</span>
                                 </span>
                                 <span class="material-icons text-sm">chevron_right</span>
-                            </button>
+                            </Link>
+
+                            <Link
+                                :href="route('admin.posts.index')"
+                                class="w-full inline-flex items-center justify-between rounded-xl border border-gray-200 px-4 py-2.5 font-semibold text-gray-700 hover:bg-gray-50"
+                            >
+                                <span class="flex items-center gap-2">
+                                    <span class="material-icons text-base">article</span>
+                                    <span>Manage blog posts</span>
+                                </span>
+                                <span class="material-icons text-sm">chevron_right</span>
+                            </Link>
                         </div>
                     </div>
                 </div>

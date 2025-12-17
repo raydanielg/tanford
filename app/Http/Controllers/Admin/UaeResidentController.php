@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\UaeResident;
+use App\Exports\UaeResidentsExport;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -56,5 +60,43 @@ class UaeResidentController extends Controller
         $resident->save();
 
         return back();
+    }
+
+    public function export(Request $request)
+    {
+        $this->ensureAdmin();
+
+        $data = $request->validate([
+            'ids' => ['required', 'array'],
+            'ids.*' => ['integer'],
+            'format' => ['required', 'string', 'in:pdf,excel'],
+        ]);
+
+        $ids = $data['ids'];
+
+        if ($data['format'] === 'excel') {
+            return Excel::download(new UaeResidentsExport($ids), 'uae-residents.xlsx');
+        }
+
+        $residents = UaeResident::query()
+            ->whereIn('id', $ids)
+            ->orderByDesc('created_at')
+            ->get([
+                'name',
+                'email',
+                'phone',
+                'city',
+                'country',
+                'nationality',
+                'package',
+                'status',
+                'created_at',
+            ]);
+
+        $html = view('exports.uae_residents_pdf', [
+            'residents' => $residents,
+        ])->render();
+
+        return Pdf::loadHTML($html)->download('uae-residents.pdf');
     }
 }

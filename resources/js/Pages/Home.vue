@@ -40,6 +40,10 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    heroSlides: {
+        type: Array,
+        default: () => [],
+    },
     footer: {
         type: Object,
         default: () => null,
@@ -53,7 +57,7 @@ const props = defineProps({
     <div class="min-h-screen bg-gray-50 text-gray-900">
         <Header />
         <main>
-            <Hero :notifications="props.notifications" />
+            <Hero :notifications="props.notifications" :slides="props.heroSlides" />
             <Features :focus-areas="props.focusAreas" />
             <AboutSection :about="props.about" />
             <WhatWeProvide />

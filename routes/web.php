@@ -11,6 +11,11 @@ use App\Models\FocusArea;
 use App\Models\Notification;
 use App\Models\FooterSetting;
 use App\Models\SecuritySetting;
+use App\Models\HeroSlide;
+use App\Models\User;
+use App\Models\ForumRegistration;
+use App\Models\UaeResident;
+use App\Models\MediaItem;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -37,6 +42,7 @@ use App\Http\Controllers\Admin\GeneralSettingController as AdminGeneralSettingCo
 use App\Http\Controllers\Admin\MailSettingController as AdminMailSettingController;
 use App\Http\Controllers\Admin\SeoSettingController as AdminSeoSettingController;
 use App\Http\Controllers\Admin\SecuritySettingController as AdminSecuritySettingController;
+use App\Http\Controllers\Admin\HeroController as AdminHeroController;
 
 Route::get('/', function () {
     $latestPosts = Post::query()
@@ -57,7 +63,6 @@ Route::get('/', function () {
 
     $memberOrganizations = MemberOrganization::query()
         ->latest('id')
-        ->take(12)
         ->get();
 
     $aboutBlock = AboutBlock::query()->first();
@@ -66,6 +71,12 @@ Route::get('/', function () {
         ->orderBy('sort_order')
         ->orderBy('id')
         ->get(['id', 'title', 'description', 'icon', 'sort_order']);
+
+    $heroSlides = HeroSlide::query()
+        ->where('is_active', true)
+        ->orderBy('sort_order')
+        ->orderBy('id')
+        ->get(['id', 'title', 'badge', 'description', 'sort_order', 'is_active']);
 
     $notifications = Notification::query()
         ->where('is_published', true)
@@ -87,6 +98,7 @@ Route::get('/', function () {
         'about' => $aboutBlock,
         'focusAreas' => $focusAreas,
         'notifications' => $notifications,
+        'heroSlides' => $heroSlides,
         'footer' => $footer,
         'testimonials' => $testimonials,
         'teamMembers' => $teamMembers,
@@ -144,7 +156,76 @@ Route::get('/forumregster', function () {
 Route::post('/forumregster', [ForumRegistrationController::class, 'store'])->name('forum.register.store');
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    $userCount = User::query()->count();
+
+    $publishedPostCount = Post::query()
+        ->whereNotNull('published_at')
+        ->count();
+
+    $mediaCount = MediaItem::query()->count();
+
+    $memberCount = MemberOrganization::query()->count();
+    $teamCount = TeamMember::query()->count();
+
+    $forumTotal = ForumRegistration::query()->count();
+    $forumPending = ForumRegistration::query()
+        ->whereNull('status')
+        ->orWhere('status', 'pending')
+        ->count();
+
+    $uaeTotal = UaeResident::query()->count();
+    $uaePending = UaeResident::query()
+        ->whereNull('status')
+        ->orWhere('status', 'pending')
+        ->count();
+
+    $recentForum = ForumRegistration::query()
+        ->latest('created_at')
+        ->take(5)
+        ->get([
+            'id',
+            'forum_name',
+            'name',
+            'email',
+            'status',
+            'created_at',
+        ]);
+
+    $recentUae = UaeResident::query()
+        ->latest('created_at')
+        ->take(5)
+        ->get([
+            'id',
+            'name',
+            'email',
+            'city',
+            'status',
+            'created_at',
+        ]);
+
+    return Inertia::render('Dashboard', [
+        'dashboard' => [
+            'stats' => [
+                'users' => $userCount,
+                'posts' => $publishedPostCount,
+                'media' => $mediaCount,
+                'members' => $memberCount,
+                'team' => $teamCount,
+                'forum' => [
+                    'total' => $forumTotal,
+                    'pending' => $forumPending,
+                ],
+                'uae' => [
+                    'total' => $uaeTotal,
+                    'pending' => $uaePending,
+                ],
+            ],
+            'recentActivity' => [
+                'forum' => $recentForum,
+                'uae' => $recentUae,
+            ],
+        ],
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -203,6 +284,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/admin/focus-areas/{focusArea}', [AdminFocusAreaController::class, 'update'])->name('admin.focus-areas.update');
     Route::post('/admin/focus-areas/{focusArea}/delete', [AdminFocusAreaController::class, 'destroy'])->name('admin.focus-areas.destroy');
 
+    // Admin hero slides management
+    Route::get('/admin/hero', [AdminHeroController::class, 'index'])->name('admin.hero.index');
+    Route::post('/admin/hero', [AdminHeroController::class, 'store'])->name('admin.hero.store');
+    Route::post('/admin/hero/{slide}', [AdminHeroController::class, 'update'])->name('admin.hero.update');
+    Route::post('/admin/hero/{slide}/delete', [AdminHeroController::class, 'destroy'])->name('admin.hero.destroy');
+
     // Admin hero notifications management
     Route::get('/admin/notifications', [AdminNotificationController::class, 'index'])->name('admin.notifications.index');
     Route::post('/admin/notifications', [AdminNotificationController::class, 'store'])->name('admin.notifications.store');
@@ -237,9 +324,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/forum-registrations/{registration}', [AdminForumRegistrationController::class, 'show'])->name('admin.forum-registrations.show');
     Route::post('/admin/forum-registrations/{registration}/status', [AdminForumRegistrationController::class, 'updateStatus'])->name('admin.forum-registrations.update-status');
 
+    // Admin forum registrations export
+    Route::get('/admin/forum-registrations/export', [AdminForumRegistrationController::class, 'export'])->name('admin.forum-registrations.export');
+
     // Admin UAE residents
     Route::get('/admin/uae-residents', [AdminUaeResidentController::class, 'index'])->name('admin.uae-residents.index');
     Route::post('/admin/uae-residents/{resident}/status', [AdminUaeResidentController::class, 'updateStatus'])->name('admin.uae-residents.update-status');
+
+    // Admin UAE residents export
+    Route::get('/admin/uae-residents/export', [AdminUaeResidentController::class, 'export'])->name('admin.uae-residents.export');
 });
 
 Route::middleware('auth')->group(function () {

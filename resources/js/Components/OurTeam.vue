@@ -33,9 +33,21 @@
                         <p class="mt-3 mb-4 font-light text-gray-500">
                             {{ member.bio }}
                         </p>
-                        <ul class="flex space-x-4 sm:mt-0" v-if="member.facebook_url || member.twitter_url">
+                        <ul
+                            class="flex space-x-4 sm:mt-0"
+                            v-if="member.instagram_url || member.facebook_url || member.linkedin_url || member.twitter_url"
+                        >
+                            <li v-if="member.instagram_url">
+                                <a :href="member.instagram_url" class="text-emerald-600 hover:text-pink-500" target="_blank" rel="noopener">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path
+                                            d="M7 2C4.243 2 2 4.243 2 7v10c0 2.757 2.243 5 5 5h10c2.757 0 5-2.243 5-5V7c0-2.757-2.243-5-5-5H7zm10 2a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h10zm-5 3.5A4.5 4.5 0 1 0 16.5 12 4.505 4.505 0 0 0 12 7.5zm0 2A2.5 2.5 0 1 1 9.5 12 2.503 2.503 0 0 1 12 9.5zm4.75-3.25a1.25 1.25 0 1 0 1.25 1.25 1.252 1.252 0 0 0-1.25-1.25z"
+                                        />
+                                    </svg>
+                                </a>
+                            </li>
                             <li v-if="member.facebook_url">
-                                <a :href="member.facebook_url" class="text-emerald-600 hover:text-sky-500">
+                                <a :href="member.facebook_url" class="text-emerald-600 hover:text-sky-500" target="_blank" rel="noopener">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path
                                             fill-rule="evenodd"
@@ -45,8 +57,17 @@
                                     </svg>
                                 </a>
                             </li>
+                            <li v-if="member.linkedin_url">
+                                <a :href="member.linkedin_url" class="text-emerald-600 hover:text-sky-600" target="_blank" rel="noopener">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path
+                                            d="M4.983 3.5C4.983 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.483 1.12 2.483 2.5zM.25 8.25h4.5v13.5H.25zM8.75 8.25h4.31v1.84h.06c.6-1.14 2.07-2.34 4.26-2.34 4.55 0 5.39 2.99 5.39 6.88v7.09h-4.5v-6.28c0-1.5-.03-3.43-2.09-3.43-2.09 0-2.41 1.63-2.41 3.32v6.39h-4.5z"
+                                        />
+                                    </svg>
+                                </a>
+                            </li>
                             <li v-if="member.twitter_url">
-                                <a :href="member.twitter_url" class="text-emerald-600 hover:text-sky-500">
+                                <a :href="member.twitter_url" class="text-emerald-600 hover:text-sky-500" target="_blank" rel="noopener">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path
                                             d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"

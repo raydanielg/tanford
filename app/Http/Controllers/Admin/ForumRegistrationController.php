@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ForumRegistration;
+use App\Exports\ForumRegistrationsExport;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -68,5 +72,44 @@ class ForumRegistrationController extends Controller
         $registration->save();
 
         return back();
+    }
+
+    public function export(Request $request)
+    {
+        $this->ensureAdmin();
+
+        $data = $request->validate([
+            'ids' => ['required', 'array'],
+            'ids.*' => ['integer'],
+            'format' => ['required', 'string', 'in:pdf,excel'],
+        ]);
+
+        $ids = $data['ids'];
+
+        if ($data['format'] === 'excel') {
+            return Excel::download(new ForumRegistrationsExport($ids), 'forum-registrations.xlsx');
+        }
+
+        $registrations = ForumRegistration::query()
+            ->whereIn('id', $ids)
+            ->orderByDesc('created_at')
+            ->get([
+                'forum_name',
+                'name',
+                'email',
+                'phone',
+                'organization',
+                'attendee_type',
+                'booth',
+                'sponsorship_package',
+                'status',
+                'created_at',
+            ]);
+
+        $html = view('exports.forum_registrations_pdf', [
+            'registrations' => $registrations,
+        ])->render();
+
+        return Pdf::loadHTML($html)->download('forum-registrations.pdf');
     }
 }

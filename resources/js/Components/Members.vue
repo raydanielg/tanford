@@ -26,9 +26,9 @@
             <div class="w-full lg:w-2/3" v-if="members.length">
                 <div class="grid grid-cols-2 gap-4 sm:grid-cols-3">
                     <div
-                        v-for="(member, index) in members"
-                        :key="index"
-                        class="flex h-24 items-center justify-center rounded-xl bg-white shadow-[0_12px_30px_rgba(15,23,42,0.06)]"
+                        v-for="(member, index) in visibleMembers"
+                        :key="`${member.id ?? index}`"
+                        class="flex h-24 items-center justify-center rounded-xl bg-white shadow-[0_12px_30px_rgba(15,23,42,0.06)] transition-transform duration-500 ease-out"
                     >
                         <img :src="member.logo_url" :alt="member.name" class="max-h-16 max-w-[80%] object-contain" />
                     </div>
@@ -39,6 +39,8 @@
 </template>
 
 <script setup>
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
+
 const props = defineProps({
     members: {
         type: Array,
@@ -46,5 +48,36 @@ const props = defineProps({
     },
 });
 
-const members = props.members ?? [];
+const members = computed(() => props.members ?? []);
+
+const pageSize = 9; // number of logos shown at once (up to 3x3 on larger screens)
+const currentPage = ref(0);
+let autoTimer = null;
+
+const totalPages = computed(() => {
+    const total = members.value.length;
+    if (!total) return 1;
+    return Math.ceil(total / pageSize);
+});
+
+const visibleMembers = computed(() => {
+    if (!members.value.length) return [];
+    const start = currentPage.value * pageSize;
+    const end = start + pageSize;
+    return members.value.slice(start, end);
+});
+
+onMounted(() => {
+    if (members.value.length > pageSize) {
+        autoTimer = window.setInterval(() => {
+            currentPage.value = (currentPage.value + 1) % totalPages.value;
+        }, 5000); // change page every 5 seconds
+    }
+});
+
+onBeforeUnmount(() => {
+    if (autoTimer) {
+        window.clearInterval(autoTimer);
+    }
+});
 </script>
