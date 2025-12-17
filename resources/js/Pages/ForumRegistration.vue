@@ -62,6 +62,13 @@ const packages = [
 
 const successMessage = ref('');
 
+const scrollToForm = () => {
+    const formSection = document.getElementById('registration-form');
+    if (formSection) {
+        formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+};
+
 const handleSubmit = () => {
     form.post(route('forum.register.store'), {
         preserveScroll: true,
@@ -91,14 +98,14 @@ const handleSubmit = () => {
                 <div class="relative z-10 text-center text-white px-4">
                     <h1 class="text-5xl sm:text-6xl font-extrabold tracking-tight mb-6">Tanzania Global Logistics Forum 2025</h1>
                     <p class="text-xl sm:text-2xl font-light mb-12 max-w-2xl mx-auto">Register Now to Join Us for an Exceptional Networking and Business Opportunity</p>
-                    <a href="#registration-form" class="inline-flex justify-center items-center py-4 px-8 text-lg font-bold text-center text-white rounded-lg bg-rose-600 hover:bg-rose-700 focus:ring-4 focus:ring-rose-300 transition-all duration-300 uppercase tracking-wide">
+                    <a @click.prevent="scrollToForm" href="#registration-form" class="inline-flex justify-center items-center py-4 px-8 text-lg font-bold text-center text-white rounded-lg bg-rose-600 hover:bg-rose-700 focus:ring-4 focus:ring-rose-300 transition-all duration-300 uppercase tracking-wide cursor-pointer">
                         Register for Forum
                     </a>
                 </div>
             </section>
 
             <!-- Registration form section -->
-            <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+            <section id="registration-form" class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
                 <div class="mx-auto max-w-4xl">
                     <!-- Breadcrumb -->
                     <nav class="mb-8">
