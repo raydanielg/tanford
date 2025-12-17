@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\UaeResident;
 use App\Mail\UaeResidentNotification;
+use App\Services\MailConfigService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -37,6 +38,8 @@ class UaeResidentController extends Controller
 
         $resident = UaeResident::create($payload);
 
+        MailConfigService::configure();
+        
         Mail::to(config('mail.notification_email', 'Forum@tanforduae.com'))
             ->send(new UaeResidentNotification($resident));
 

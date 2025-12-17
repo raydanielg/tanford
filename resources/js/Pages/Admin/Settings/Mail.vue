@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 const props = defineProps({
     settings: {
@@ -20,9 +21,22 @@ const form = useForm({
     from_name: props.settings?.from_name || '',
 });
 
+const testForm = useForm({
+    test_email: '',
+});
+
 const submit = () => {
     form.post(route('admin.settings.mail.update'), {
         preserveScroll: true,
+    });
+};
+
+const sendTestEmail = () => {
+    testForm.post(route('admin.settings.mail.test'), {
+        preserveScroll: true,
+        onSuccess: () => {
+            testForm.reset();
+        },
     });
 };
 </script>
@@ -140,6 +154,53 @@ const submit = () => {
                     </button>
                 </div>
             </form>
+
+            <!-- Test Email Section -->
+            <div class="bg-white rounded-2xl border border-gray-100 p-5">
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold text-gray-900">Test Email Configuration</h2>
+                    <p class="text-[11px] text-gray-500 mt-1">Send a test email to verify your SMTP settings are working correctly.</p>
+                </div>
+
+                <form @submit.prevent="sendTestEmail" class="space-y-4">
+                    <div class="flex gap-3 items-end">
+                        <div class="flex-1">
+                            <label class="block text-[11px] font-medium text-gray-700 mb-1">Recipient Email Address</label>
+                            <input
+                                v-model="testForm.test_email"
+                                type="email"
+                                required
+                                class="w-full rounded-lg border-gray-300 text-[12px] focus:ring-emerald-500 focus:border-emerald-500"
+                                placeholder="your-email@example.com"
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            class="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-[11px] font-semibold text-white hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed"
+                            :disabled="testForm.processing"
+                        >
+                            <span v-if="testForm.processing" class="inline-flex h-4 w-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
+                            <span class="material-icons text-sm">send</span>
+                            <span>Send Test Email</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                        <div class="flex gap-2">
+                            <span class="material-icons text-blue-600 text-base">info</span>
+                            <div class="text-[11px] text-blue-800">
+                                <p class="font-medium mb-1">How to test:</p>
+                                <ol class="list-decimal list-inside space-y-1">
+                                    <li>Enter your email address above</li>
+                                    <li>Click "Send Test Email"</li>
+                                    <li>Check your inbox for the test message</li>
+                                    <li>If you don't receive it, check your spam folder or verify your SMTP settings</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </AuthenticatedLayout>
 </template>

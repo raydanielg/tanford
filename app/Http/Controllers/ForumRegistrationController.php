@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ForumRegistration;
 use App\Mail\ForumRegistrationNotification;
+use App\Services\MailConfigService;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
@@ -45,6 +46,8 @@ class ForumRegistrationController extends Controller
 
         $registration = ForumRegistration::create($data);
 
+        MailConfigService::configure();
+        
         Mail::to(config('mail.notification_email', 'Forum@tanforduae.com'))
             ->send(new ForumRegistrationNotification($registration));
 

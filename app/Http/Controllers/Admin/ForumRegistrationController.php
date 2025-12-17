@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\ForumRegistration;
 use App\Exports\ForumRegistrationsExport;
 use App\Mail\ForumRegistrationApproved;
+use App\Mail\ForumRegistrationApprovedAdmin;
+use App\Services\MailConfigService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,8 +79,13 @@ class ForumRegistrationController extends Controller
         $registration->save();
 
         if ($oldStatus !== 'approved' && $newStatus === 'approved') {
+            MailConfigService::configure();
+            
             Mail::to($registration->email)
                 ->send(new ForumRegistrationApproved($registration));
+            
+            Mail::to(config('mail.notification_email', 'Forum@tanforduae.com'))
+                ->send(new ForumRegistrationApprovedAdmin($registration));
         }
 
         return back();

@@ -311,6 +311,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Admin mail / SMTP settings
     Route::get('/admin/settings/mail', [AdminMailSettingController::class, 'index'])->name('admin.settings.mail');
     Route::post('/admin/settings/mail', [AdminMailSettingController::class, 'update'])->name('admin.settings.mail.update');
+    Route::post('/admin/settings/mail/test', [AdminMailSettingController::class, 'sendTest'])->name('admin.settings.mail.test');
 
     // Admin SEO settings
     Route::get('/admin/settings/seo', [AdminSeoSettingController::class, 'index'])->name('admin.settings.seo');

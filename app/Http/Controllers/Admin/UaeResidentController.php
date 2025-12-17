@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\UaeResident;
 use App\Exports\UaeResidentsExport;
 use App\Mail\UaeResidentApproved;
+use App\Mail\UaeResidentApprovedAdmin;
+use App\Services\MailConfigService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -65,8 +67,13 @@ class UaeResidentController extends Controller
         $resident->save();
 
         if ($oldStatus !== 'approved' && $newStatus === 'approved') {
+            MailConfigService::configure();
+            
             Mail::to($resident->email)
                 ->send(new UaeResidentApproved($resident));
+            
+            Mail::to(config('mail.notification_email', 'Forum@tanforduae.com'))
+                ->send(new UaeResidentApprovedAdmin($resident));
         }
 
         return back();
