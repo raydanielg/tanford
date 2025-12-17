@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
 
 const props = defineProps({
     registrations: {
@@ -20,6 +21,40 @@ const updateStatus = (reg, status) => {
             preserveState: true,
         },
     );
+};
+
+const selectedIds = ref([]);
+
+const allSelected = computed(() => {
+    if (!props.registrations.length) return false;
+    return selectedIds.value.length === props.registrations.length;
+});
+
+const toggleSelectAll = () => {
+    if (allSelected.value) {
+        selectedIds.value = [];
+    } else {
+        selectedIds.value = props.registrations.map((reg) => reg.id);
+    }
+};
+
+const toggleRow = (id) => {
+    if (selectedIds.value.includes(id)) {
+        selectedIds.value = selectedIds.value.filter((x) => x !== id);
+    } else {
+        selectedIds.value.push(id);
+    }
+};
+
+const exportSelected = (format) => {
+    if (!selectedIds.value.length) return;
+
+    const params = new URLSearchParams();
+    selectedIds.value.forEach((id) => params.append('ids[]', id));
+    params.append('format', format);
+
+    const url = route('admin.forum-registrations.export') + '?' + params.toString();
+    window.location.href = url;
 };
 </script>
 
@@ -41,9 +76,43 @@ const updateStatus = (reg, status) => {
             </div>
 
             <div class="bg-white rounded-2xl border border-gray-100 p-5 text-xs overflow-x-auto">
+                <div class="flex items-center justify-between mb-3">
+                    <p class="text-[11px] text-gray-500">
+                        Select registrations then export as PDF or Excel.
+                    </p>
+                    <div class="flex items-center gap-2">
+                        <button
+                            type="button"
+                            class="inline-flex items-center gap-1 rounded-full border border-gray-200 px-3 py-1.5 text-[11px] font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-default"
+                            :disabled="!selectedIds.length"
+                            @click="exportSelected('excel')"
+                        >
+                            <span class="material-icons text-[14px] text-emerald-600">grid_on</span>
+                            <span>Export Excel</span>
+                        </button>
+                        <button
+                            type="button"
+                            class="inline-flex items-center gap-1 rounded-full border border-gray-200 px-3 py-1.5 text-[11px] font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-default"
+                            :disabled="!selectedIds.length"
+                            @click="exportSelected('pdf')"
+                        >
+                            <span class="material-icons text-[14px] text-rose-500">picture_as_pdf</span>
+                            <span>Export PDF</span>
+                        </button>
+                    </div>
+                </div>
+
                 <table class="min-w-full text-left">
                     <thead>
                         <tr class="border-b border-gray-100 text-[11px] text-gray-500">
+                            <th class="py-2 px-3 font-medium w-8">
+                                <input
+                                    type="checkbox"
+                                    class="h-3.5 w-3.5 rounded border-gray-300 text-emerald-600"
+                                    :checked="allSelected"
+                                    @change="toggleSelectAll"
+                                />
+                            </th>
                             <th class="py-2 px-3 font-medium">Forum</th>
                             <th class="py-2 px-3 font-medium">Name</th>
                             <th class="py-2 px-3 font-medium">Email</th>
@@ -59,6 +128,15 @@ const updateStatus = (reg, status) => {
                     </thead>
                     <tbody>
                         <tr v-for="reg in props.registrations" :key="reg.id" class="border-b border-gray-50 hover:bg-gray-50/60">
+                            <td class="py-2 px-3 text-[11px] text-gray-700">
+                                <input
+                                    type="checkbox"
+                                    class="h-3.5 w-3.5 rounded border-gray-300 text-emerald-600"
+                                    :value="reg.id"
+                                    :checked="selectedIds.includes(reg.id)"
+                                    @change="toggleRow(reg.id)"
+                                />
+                            </td>
                             <td class="py-2 px-3 text-[11px] text-gray-700">{{ reg.forum_name }}</td>
                             <td class="py-2 px-3 text-[11px] text-gray-900">{{ reg.name }}</td>
                             <td class="py-2 px-3 text-[11px] text-emerald-700">{{ reg.email }}</td>
@@ -113,7 +191,7 @@ const updateStatus = (reg, status) => {
                             </td>
                         </tr>
                         <tr v-if="!props.registrations.length">
-                            <td colspan="10" class="py-6 text-center text-[11px] text-gray-500">No registrations yet.</td>
+                            <td colspan="12" class="py-6 text-center text-[11px] text-gray-500">No registrations yet.</td>
                         </tr>
                     </tbody>
                 </table>

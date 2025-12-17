@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
 
 const props = defineProps({
     residents: {
@@ -20,6 +21,40 @@ const updateStatus = (resident, status) => {
             preserveState: true,
         },
     );
+};
+
+const selectedIds = ref([]);
+
+const allSelected = computed(() => {
+    if (!props.residents.length) return false;
+    return selectedIds.value.length === props.residents.length;
+});
+
+const toggleSelectAll = () => {
+    if (allSelected.value) {
+        selectedIds.value = [];
+    } else {
+        selectedIds.value = props.residents.map((resident) => resident.id);
+    }
+};
+
+const toggleRow = (id) => {
+    if (selectedIds.value.includes(id)) {
+        selectedIds.value = selectedIds.value.filter((x) => x !== id);
+    } else {
+        selectedIds.value.push(id);
+    }
+};
+
+const exportSelected = (format) => {
+    if (!selectedIds.value.length) return;
+
+    const params = new URLSearchParams();
+    selectedIds.value.forEach((id) => params.append('ids[]', id));
+    params.append('format', format);
+
+    const url = route('admin.uae-residents.export') + '?' + params.toString();
+    window.location.href = url;
 };
 </script>
 
@@ -43,9 +78,43 @@ const updateStatus = (resident, status) => {
             </div>
 
             <div class="bg-white rounded-2xl border border-gray-100 p-5 text-xs overflow-x-auto">
+                <div class="flex items-center justify-between mb-3">
+                    <p class="text-[11px] text-gray-500">
+                        Select residents then export as PDF or Excel.
+                    </p>
+                    <div class="flex items-center gap-2">
+                        <button
+                            type="button"
+                            class="inline-flex items-center gap-1 rounded-full border border-gray-200 px-3 py-1.5 text-[11px] font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-default"
+                            :disabled="!selectedIds.length"
+                            @click="exportSelected('excel')"
+                        >
+                            <span class="material-icons text-[14px] text-emerald-600">grid_on</span>
+                            <span>Export Excel</span>
+                        </button>
+                        <button
+                            type="button"
+                            class="inline-flex items-center gap-1 rounded-full border border-gray-200 px-3 py-1.5 text-[11px] font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-default"
+                            :disabled="!selectedIds.length"
+                            @click="exportSelected('pdf')"
+                        >
+                            <span class="material-icons text-[14px] text-rose-500">picture_as_pdf</span>
+                            <span>Export PDF</span>
+                        </button>
+                    </div>
+                </div>
+
                 <table class="min-w-full text-left">
                     <thead>
                         <tr class="border-b border-gray-100 text-[11px] text-gray-500">
+                            <th class="py-2 px-3 font-medium w-8">
+                                <input
+                                    type="checkbox"
+                                    class="h-3.5 w-3.5 rounded border-gray-300 text-emerald-600"
+                                    :checked="allSelected"
+                                    @change="toggleSelectAll"
+                                />
+                            </th>
                             <th class="py-2 px-3 font-medium">Name</th>
                             <th class="py-2 px-3 font-medium">Email</th>
                             <th class="py-2 px-3 font-medium">Phone</th>
@@ -64,6 +133,15 @@ const updateStatus = (resident, status) => {
                             :key="resident.id"
                             class="border-b border-gray-50 hover:bg-gray-50/60"
                         >
+                            <td class="py-2 px-3 text-[11px] text-gray-700">
+                                <input
+                                    type="checkbox"
+                                    class="h-3.5 w-3.5 rounded border-gray-300 text-emerald-600"
+                                    :value="resident.id"
+                                    :checked="selectedIds.includes(resident.id)"
+                                    @change="toggleRow(resident.id)"
+                                />
+                            </td>
                             <td class="py-2 px-3 text-[11px] text-gray-900">{{ resident.name }}</td>
                             <td class="py-2 px-3 text-[11px] text-emerald-700">{{ resident.email }}</td>
                             <td class="py-2 px-3 text-[11px] text-gray-700">{{ resident.phone || '-' }}</td>
@@ -110,7 +188,7 @@ const updateStatus = (resident, status) => {
                             </td>
                         </tr>
                         <tr v-if="!props.residents.length">
-                            <td colspan="10" class="py-6 text-center text-[11px] text-gray-500">No registrations yet.</td>
+                            <td colspan="11" class="py-6 text-center text-[11px] text-gray-500">No registrations yet.</td>
                         </tr>
                     </tbody>
                 </table>

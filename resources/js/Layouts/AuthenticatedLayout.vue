@@ -3,7 +3,7 @@ import { ref, computed } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link, usePage, router } from '@inertiajs/vue3';
 
 const showingSidebar = ref(true);
 const showCmsMenu = ref(false);
@@ -31,6 +31,7 @@ const mockSearchResults = computed(() => {
 
 const page = usePage();
 const user = computed(() => page.props.auth.user ?? {});
+const adminNotifications = computed(() => page.props.adminNotifications ?? { items: [], unreadCount: 0 });
 const isAdmin = computed(() => user.value.role === 'admin');
 
 const userInitials = computed(() => {
@@ -42,6 +43,16 @@ const userInitials = computed(() => {
         .slice(0, 2)
         .toUpperCase();
 });
+
+const markAllNotificationsRead = () => {
+    if (!adminNotifications.value.unreadCount) return;
+
+    router.post(route('admin.header-notifications.read-all'), {}, {
+        preserveScroll: true,
+        preserveState: true,
+        only: ['adminNotifications'],
+    });
+};
 </script>
 
 <template>
@@ -434,36 +445,55 @@ const userInitials = computed(() => {
                         <template #trigger>
                             <button type="button" class="relative inline-flex items-center justify-center rounded-full h-9 w-9 bg-gray-50 text-gray-500 hover:bg-gray-100">
                                 <span class="material-icons text-base">notifications</span>
-                                <span class="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">3</span>
+                                <span
+                                    v-if="adminNotifications.unreadCount > 0"
+                                    class="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 px-0.5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white"
+                                >
+                                    {{ adminNotifications.unreadCount }}
+                                </span>
                             </button>
                         </template>
 
                         <template #content>
                             <div class="px-3 py-2 border-b border-gray-100 flex items-center justify-between">
                                 <p class="text-[11px] font-semibold text-gray-700">Notifications</p>
-                                <span class="text-[10px] text-emerald-600 font-medium cursor-pointer">Mark all read</span>
+                                <button
+                                    type="button"
+                                    class="text-[10px] text-emerald-600 font-medium cursor-pointer disabled:opacity-40"
+                                    :disabled="!adminNotifications.unreadCount"
+                                    @click="markAllNotificationsRead"
+                                >
+                                    Mark all read
+                                </button>
                             </div>
                             <ul class="max-h-64 overflow-y-auto text-[11px]">
-                                <li class="px-3 py-2 flex items-start gap-2 hover:bg-gray-50">
-                                    <span class="mt-0.5 material-icons text-sm text-emerald-500">check_circle</span>
-                                    <div>
-                                        <p class="font-semibold text-gray-800">New forum registration</p>
-                                        <p class="text-gray-500">A user submitted the logistics forum form.</p>
+                                <li
+                                    v-for="item in adminNotifications.items"
+                                    :key="item.id"
+                                    class="px-3 py-2 flex items-start gap-2 hover:bg-gray-50"
+                                >
+                                    <span class="mt-0.5 material-icons text-sm"
+                                        :class="{
+                                            'text-emerald-500': item.type === 'forum_registration',
+                                            'text-sky-500': item.type === 'uae_resident',
+                                            'text-purple-500': item.type === 'user_signup',
+                                        }"
+                                    >
+                                        {{ item.type === 'forum_registration' ? 'event' : item.type === 'uae_resident' ? 'flight_takeoff' : 'person_add' }}
+                                    </span>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="font-semibold text-gray-800 truncate">{{ item.title }}</p>
+                                        <p class="text-gray-500 truncate">{{ item.message }}</p>
+                                        <p class="text-[10px] text-gray-400 mt-0.5">
+                                            {{ new Date(item.created_at).toLocaleString() }}
+                                        </p>
                                     </div>
                                 </li>
-                                <li class="px-3 py-2 flex items-start gap-2 hover:bg-gray-50">
-                                    <span class="mt-0.5 material-icons text-sm text-sky-500">group</span>
-                                    <div>
-                                        <p class="font-semibold text-gray-800">New member added</p>
-                                        <p class="text-gray-500">A team member was created in CMS.</p>
-                                    </div>
-                                </li>
-                                <li class="px-3 py-2 flex items-start gap-2 hover:bg-gray-50">
-                                    <span class="mt-0.5 material-icons text-sm text-amber-500">warning</span>
-                                    <div>
-                                        <p class="font-semibold text-gray-800">SMTP not configured</p>
-                                        <p class="text-gray-500">Update email settings in Settings &gt; SMTP.</p>
-                                    </div>
+                                <li
+                                    v-if="!adminNotifications.items.length"
+                                    class="px-3 py-3 text-[11px] text-gray-500 text-center"
+                                >
+                                    No new notifications.
                                 </li>
                             </ul>
                         </template>

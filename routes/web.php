@@ -18,6 +18,7 @@ use App\Models\UaeResident;
 use App\Models\MediaItem;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\GalleryController;
@@ -333,6 +334,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Admin UAE residents export
     Route::get('/admin/uae-residents/export', [AdminUaeResidentController::class, 'export'])->name('admin.uae-residents.export');
+
+    // Admin header notifications - mark all as read
+    Route::post('/admin/header-notifications/read-all', function (Request $request) {
+        $user = $request->user();
+
+        if ($user && $user->role === 'admin') {
+            $user->forceFill([
+                'admin_last_seen_notifications_at' => now(),
+            ])->save();
+        }
+
+        return back();
+    })->name('admin.header-notifications.read-all');
 });
 
 Route::middleware('auth')->group(function () {
