@@ -28,7 +28,7 @@ class ForumRegistrationController extends Controller
             'organization' => ['required', 'string', 'max:255'],
             'contact_person' => ['required', 'string', 'max:255'],
             'job_title' => ['required', 'string', 'max:255'],
-            'website' => ['required', 'string', 'max:255'],
+            'website' => ['nullable', 'string', 'max:255'],
             'contact_phone' => ['required', 'string', 'max:50'],
             'attendee_count' => ['required', 'integer', 'min:1'],
             'services' => ['required', 'array', 'min:1'],

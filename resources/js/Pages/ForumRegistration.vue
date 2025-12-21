@@ -277,8 +277,8 @@ const handleSubmit = () => {
 
                             <!-- Website -->
                             <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-900 mb-3">Professional Website <span class="text-rose-600">*</span></label>
-                                <input v-model="form.website" type="url" placeholder="E.g. www.example.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent" required />
+                                <label class="block text-sm font-semibold text-gray-900 mb-3">Professional Website (optional)</label>
+                                <input v-model="form.website" type="url" placeholder="E.g. www.example.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
                             </div>
 
                             <!-- Contact Phone -->
