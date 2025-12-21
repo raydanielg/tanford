@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\ForumRegistration;
 use App\Mail\ForumRegistrationNotification;
+use App\Mail\ForumRegistrationUserConfirmation;
 use App\Services\MailConfigService;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ForumRegistrationController extends Controller
 {
@@ -15,25 +18,25 @@ class ForumRegistrationController extends Controller
     {
         $data = $request->validate([
             'forum_name' => ['required', 'string', 'max:255'],
-            'attendee_type' => ['nullable', 'string', 'max:255'],
+            'attendee_type' => ['required', 'string', 'max:255'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:50'],
-            'city' => ['nullable', 'string', 'max:255'],
-            'country' => ['nullable', 'string', 'max:255'],
-            'nationality' => ['nullable', 'string', 'max:255'],
-            'organization' => ['nullable', 'string', 'max:255'],
-            'contact_person' => ['nullable', 'string', 'max:255'],
-            'job_title' => ['nullable', 'string', 'max:255'],
-            'website' => ['nullable', 'string', 'max:255'],
-            'contact_phone' => ['nullable', 'string', 'max:50'],
-            'attendee_count' => ['nullable', 'integer', 'min:1'],
-            'services' => ['nullable', 'array'],
+            'phone' => ['required', 'string', 'max:50'],
+            'city' => ['required', 'string', 'max:255'],
+            'country' => ['required', 'string', 'max:255'],
+            'nationality' => ['required', 'string', 'max:255'],
+            'organization' => ['required', 'string', 'max:255'],
+            'contact_person' => ['required', 'string', 'max:255'],
+            'job_title' => ['required', 'string', 'max:255'],
+            'website' => ['required', 'string', 'max:255'],
+            'contact_phone' => ['required', 'string', 'max:50'],
+            'attendee_count' => ['required', 'integer', 'min:1'],
+            'services' => ['required', 'array', 'min:1'],
             'services.*' => ['string', 'max:255'],
             'other_services' => ['nullable', 'string', 'max:255'],
-            'attendance_days' => ['nullable', 'array'],
+            'attendance_days' => ['required', 'array', 'min:1'],
             'attendance_days.*' => ['string', 'max:50'],
-            'booth' => ['nullable', 'string', 'max:50'],
+            'booth' => ['required', 'string', 'max:50'],
             'sponsorship_package' => ['nullable', 'string', 'max:255'],
             'agree_terms' => ['required', 'boolean'],
         ]);
@@ -47,10 +50,20 @@ class ForumRegistrationController extends Controller
         $registration = ForumRegistration::create($data);
 
         MailConfigService::configure();
-        
+
+        // Notify admin only at submission time
         Mail::to(config('mail.notification_email', 'Forum@tanforduae.com'))
             ->send(new ForumRegistrationNotification($registration));
 
-        return back()->with('success', 'Thank you for registering for the forum.');
+        return back()
+            ->with('success', 'Thank you for registering for the forum.')
+            ->with('registration_id', $registration->id);
+    }
+
+    public function preview(ForumRegistration $registration): Response
+    {
+        return Inertia::render('ForumRegistrationPreview', [
+            'registration' => $registration,
+        ]);
     }
 }

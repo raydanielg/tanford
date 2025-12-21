@@ -121,6 +121,10 @@ const exportSelected = (format) => {
                             <th class="py-2 px-3 font-medium">City</th>
                             <th class="py-2 px-3 font-medium">Country</th>
                             <th class="py-2 px-3 font-medium">Nationality</th>
+                            <th class="py-2 px-3 font-medium">Job title</th>
+                            <th class="py-2 px-3 font-medium">Website</th>
+                            <th class="py-2 px-3 font-medium">Attendee type</th>
+                            <th class="py-2 px-3 font-medium"># People</th>
                             <th class="py-2 px-3 font-medium">Package</th>
                             <th class="py-2 px-3 font-medium">Status</th>
                             <th class="py-2 px-3 font-medium">Created</th>
@@ -148,6 +152,15 @@ const exportSelected = (format) => {
                             <td class="py-2 px-3 text-[11px] text-gray-700">{{ resident.city || '-' }}</td>
                             <td class="py-2 px-3 text-[11px] text-gray-700">{{ resident.country || '-' }}</td>
                             <td class="py-2 px-3 text-[11px] text-gray-700">{{ resident.nationality || '-' }}</td>
+                            <td class="py-2 px-3 text-[11px] text-gray-700">{{ resident.job_title || '-' }}</td>
+                            <td class="py-2 px-3 text-[11px] text-emerald-700 truncate max-w-[140px]">
+                                <a v-if="resident.website" :href="resident.website" target="_blank" class="hover:underline">
+                                    {{ resident.website }}
+                                </a>
+                                <span v-else>-</span>
+                            </td>
+                            <td class="py-2 px-3 text-[11px] text-gray-700">{{ resident.attendee_type || '-' }}</td>
+                            <td class="py-2 px-3 text-[11px] text-gray-700">{{ resident.attendee_count ?? '-' }}</td>
                             <td class="py-2 px-3 text-[11px] text-gray-700">{{ resident.package || '-' }}</td>
                             <td class="py-2 px-3 text-[11px]">
                                 <span
@@ -188,7 +201,7 @@ const exportSelected = (format) => {
                             </td>
                         </tr>
                         <tr v-if="!props.residents.length">
-                            <td colspan="11" class="py-6 text-center text-[11px] text-gray-500">No registrations yet.</td>
+                            <td colspan="15" class="py-6 text-center text-[11px] text-gray-500">No registrations yet.</td>
                         </tr>
                     </tbody>
                 </table>

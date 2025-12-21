@@ -150,11 +150,17 @@ Route::get('/uaeresidents', function () {
 
 Route::post('/uaeresidents', [UaeResidentController::class, 'store'])->name('uaeresidents.store');
 
+Route::get('/uaeresidents/preview/{resident}', [UaeResidentController::class, 'preview'])
+    ->name('uaeresidents.preview');
+
 Route::get('/forumregster', function () {
     return Inertia::render('ForumRegistration');
 });
 
 Route::post('/forumregster', [ForumRegistrationController::class, 'store'])->name('forum.register.store');
+
+Route::get('/forumregster/preview/{registration}', [ForumRegistrationController::class, 'preview'])
+    ->name('forum.register.preview');
 
 Route::get('/dashboard', function () {
     $userCount = User::query()->count();

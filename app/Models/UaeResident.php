@@ -22,6 +22,7 @@ class UaeResident extends Model
         'job_title',
         'organization',
         'website',
+        'attendee_count',
         'attendance_days',
         'package',
         'agree_terms',

@@ -159,13 +159,13 @@ const exportSelected = (format) => {
                             </td>
                             <td class="py-2 px-3 text-[11px] text-gray-500">{{ new Date(reg.created_at).toLocaleString() }}</td>
                             <td class="py-2 px-3 text-[11px] text-right">
-                                <div class="flex flex-col items-end gap-1">
+                                <div class="flex gap-1 justify-end">
                                     <Link
                                         :href="route('admin.forum-registrations.show', reg.id)"
-                                        class="inline-flex items-center gap-1 rounded-full border border-emerald-200 px-3 py-1 text-[11px] font-medium text-emerald-800 bg-emerald-50 hover:bg-emerald-100 hover:border-emerald-300 transition"
+                                        class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] border border-gray-200 text-gray-700 bg-white hover:bg-gray-50"
                                     >
-                                        <span class="material-icons text-[14px]">visibility</span>
-                                        <span>View</span>
+                                        <span class="material-icons text-[13px]">visibility</span>
+                                        <span>View details</span>
                                     </Link>
                                     <div class="flex gap-1">
                                         <button

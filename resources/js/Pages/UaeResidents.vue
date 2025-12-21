@@ -1,8 +1,8 @@
 <script setup>
 import Header from '@/Components/Header.vue';
 import Footer from '@/Components/Footer.vue';
-import { ref, onMounted, onBeforeUnmount } from 'vue';
-import { useForm } from '@inertiajs/vue3';
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
+import { useForm, usePage } from '@inertiajs/vue3';
 
 const days = ref('00');
 const hours = ref('00');
@@ -24,12 +24,42 @@ const form = useForm({
     job_title: '',
     organization: '',
     website: '',
+    attendee_count: '',
     attendance_days: [],
     package: '',
     agree_terms: false,
 });
 
 const successMessage = ref('');
+const showCongrats = ref(false);
+const submittedSnapshot = ref(null);
+
+const page = usePage();
+const residentId = computed(() => page.props.flash?.resident_id || null);
+
+const whatsappMessage = computed(() => {
+    if (!submittedSnapshot.value) return '';
+
+    const data = submittedSnapshot.value;
+    const parts = [
+        `I have just registered as a UAE resident attendee for the Tanzania Trade & Logistics Forum.`,
+    ];
+
+    if (data.city || data.country) {
+        parts.push(`Location: ${[data.city, data.country].filter(Boolean).join(', ')}`);
+    }
+
+    if (data.package) {
+        parts.push(`Package: ${data.package}`);
+    }
+
+    parts.push('Join me and be part of this opportunity.');
+
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    parts.push(`${baseUrl}/uaeresidents`);
+
+    return parts.join(' ');
+});
 
 const targetDate = new Date('2026-02-13T09:00:00+04:00');
 
@@ -70,11 +100,10 @@ const submitDiasporaForm = () => {
     form.post(route('uaeresidents.store'), {
         preserveScroll: true,
         onSuccess: () => {
+            submittedSnapshot.value = { ...form.data() };
             successMessage.value = 'Thank you for registering as a UAE resident attendee. We will contact you soon.';
+            showCongrats.value = true;
             form.reset();
-            setTimeout(() => {
-                successMessage.value = '';
-            }, 6000);
         },
     });
 };
@@ -242,8 +271,14 @@ const submitDiasporaForm = () => {
 
                             <!-- Professional Website -->
                             <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">Professional Website</label>
-                                <input v-model="form.website" type="url" placeholder="E.g. www.example.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">Professional Website <span class="text-rose-600">*</span></label>
+                                <input v-model="form.website" type="url" placeholder="E.g. www.example.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent" required />
+                            </div>
+
+                            <!-- Number of People Attending -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">How many people will be coming to the forum with you? <span class="text-rose-600">*</span></label>
+                                <input v-model="form.attendee_count" type="number" min="1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent" required />
                             </div>
 
                             <!-- Attendance Days -->
@@ -305,5 +340,78 @@ const submitDiasporaForm = () => {
             </section>
         </main>
         <Footer />
+
+        <!-- Congratulations popup -->
+        <div
+            v-if="showCongrats"
+            class="fixed inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4"
+        >
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-900">Congratulations!</h2>
+                        <p class="mt-1 text-sm text-gray-600">
+                            Your UAE resident registration has been submitted successfully. You will receive a
+                            confirmation email shortly.
+                        </p>
+                    </div>
+                    <button
+                        type="button"
+                        class="text-gray-400 hover:text-gray-600"
+                        @click="showCongrats = false"
+                    >
+                        <span class="material-icons text-[18px]">close</span>
+                    </button>
+                </div>
+
+                <div class="space-y-3 text-sm text-gray-700" v-if="submittedSnapshot">
+                    <p class="font-semibold text-gray-900">
+                        {{ submittedSnapshot.name }}
+                        <span v-if="submittedSnapshot.job_title" class="text-gray-500 font-normal">
+                            · {{ submittedSnapshot.job_title }}
+                        </span>
+                    </p>
+                    <p v-if="submittedSnapshot.city || submittedSnapshot.country">
+                        <span class="text-gray-500">Location:</span>
+                        <span class="ml-1">
+                            {{ [submittedSnapshot.city, submittedSnapshot.country].filter(Boolean).join(', ') }}
+                        </span>
+                    </p>
+                    <p v-if="submittedSnapshot.package">
+                        <span class="text-gray-500">Package:</span>
+                        <span class="ml-1">{{ submittedSnapshot.package }}</span>
+                    </p>
+                </div>
+
+                <div class="space-y-3 pt-2">
+                    <a
+                        :href="`https://wa.me/?text=${encodeURIComponent(whatsappMessage)}`"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="w-full inline-flex items-center justify-center gap-2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2.5 px-4"
+                    >
+                        <span class="material-icons text-[16px]">share</span>
+                        <span>Share via WhatsApp</span>
+                    </a>
+
+                    <a
+                        v-if="residentId"
+                        :href="route('uaeresidents.preview', residentId)"
+                        class="w-full inline-flex items-center justify-center gap-2 rounded-full border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm font-semibold py-2.5 px-4"
+                    >
+                        <span class="material-icons text-[16px]">visibility</span>
+                        <span>View your registration</span>
+                    </a>
+
+                    <button
+                        type="button"
+                        class="w-full inline-flex items-center justify-center gap-2 rounded-full border border-transparent text-gray-600 hover:bg-gray-50 text-xs font-medium py-2 px-4"
+                        @click="showCongrats = false"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
