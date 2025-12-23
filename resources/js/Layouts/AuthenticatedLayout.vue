@@ -65,8 +65,8 @@ const markAllNotificationsRead = () => {
                 <Link :href="route('dashboard')" class="flex items-center gap-3">
                     <ApplicationLogo class="h-9 w-auto fill-current text-white" />
                     <div class="flex flex-col leading-tight">
-                        <span class="text-sm font-semibold">Tanford Console</span>
-                        <span class="text-[11px] text-emerald-100">{{ isAdmin ? 'Administrator' : 'User workspace' }}</span>
+                        <span class="text-sm font-semibold tracking-wide">TANFORD</span>
+                        <span class="text-[11px] text-emerald-100">Console</span>
                     </div>
                 </Link>
             </div>
