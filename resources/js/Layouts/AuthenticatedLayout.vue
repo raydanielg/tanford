@@ -61,13 +61,10 @@ const markAllNotificationsRead = () => {
         <aside
             class="hidden md:flex flex-col w-64 bg-emerald-900 text-white shadow-xl"
         >
-            <div class="h-16 flex items-center px-6 border-b border-emerald-800">
-                <Link :href="route('dashboard')" class="flex items-center gap-3">
+            <div class="h-20 flex items-center justify-center px-6 border-b border-emerald-800">
+                <Link :href="route('dashboard')" class="flex flex-col items-center gap-1">
                     <ApplicationLogo class="h-9 w-auto fill-current text-white" />
-                    <div class="flex flex-col leading-tight">
-                        <span class="text-sm font-semibold tracking-wide">TANFORD</span>
-                        <span class="text-[11px] text-emerald-100">Console</span>
-                    </div>
+                    <span class="text-xs font-semibold tracking-wide text-emerald-50">TANFORD Console</span>
                 </Link>
             </div>
 
