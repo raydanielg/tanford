@@ -53,8 +53,6 @@ const form = useForm({
     remember: false,
 });
 
-const selectedRole = ref('user');
-
 const submit = () => {
     form.post(route('login'), {
         onFinish: () => form.reset('password'),
@@ -165,30 +163,19 @@ const submit = () => {
 
                     <!-- Role selector + remember / forgot -->
                     <div class="flex flex-col gap-3 mt-1 text-xs">
-                        <div class="flex items-center justify-between gap-3">
-                            <span class="text-gray-600 font-semibold">Role</span>
-                            <select
-                                v-model="selectedRole"
-                                class="border border-gray-300 rounded-lg px-2 py-1 text-xs text-gray-700 focus:border-emerald-500 focus:ring-emerald-500 bg-white"
-                            >
-                                <option value="user">User</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                        </div>
-
                         <div class="flex items-center justify-between">
-                        <label class="flex items-center gap-2">
-                            <Checkbox name="remember" v-model:checked="form.remember" />
-                            <span class="text-gray-600">Remember me</span>
-                        </label>
+                            <label class="flex items-center gap-2">
+                                <Checkbox name="remember" v-model:checked="form.remember" />
+                                <span class="text-gray-600">Remember me</span>
+                            </label>
 
-                        <Link
-                            v-if="canResetPassword"
-                            :href="route('password.request')"
-                            class="text-emerald-600 hover:text-emerald-700 font-semibold"
-                        >
-                            Forgot password?
-                        </Link>
+                            <Link
+                                v-if="canResetPassword"
+                                :href="route('password.request')"
+                                class="text-emerald-600 hover:text-emerald-700 font-semibold"
+                            >
+                                Forgot password?
+                            </Link>
                         </div>
                     </div>
 
