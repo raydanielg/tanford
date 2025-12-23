@@ -43,6 +43,17 @@ class TanfordMemberController extends Controller
         ]);
     }
 
+    public function show(TanfordMember $member): Response
+    {
+        $this->ensureAdmin();
+
+        $member->refresh();
+
+        return Inertia::render('Admin/TanfordMemberShow', [
+            'member' => $member,
+        ]);
+    }
+
     public function updateStatus(TanfordMember $member): RedirectResponse
     {
         $this->ensureAdmin();

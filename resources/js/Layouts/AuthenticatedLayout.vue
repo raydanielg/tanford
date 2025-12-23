@@ -140,6 +140,15 @@ const markAllNotificationsRead = () => {
                                                 UAE Residents
                                             </Link>
                                         </li>
+                                        <li>
+                                            <Link
+                                                :href="route('admin.tanford-members.index')"
+                                                class="block w-full text-left py-1 hover:text-white"
+                                                :class="route().current('admin.tanford-members.*') ? 'text-white font-semibold' : ''"
+                                            >
+                                                TANFORD Members
+                                            </Link>
+                                        </li>
                                     </ul>
                                 </transition>
                             </li>

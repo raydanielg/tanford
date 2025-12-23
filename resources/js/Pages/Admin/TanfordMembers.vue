@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, router } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 
 const props = defineProps({
@@ -125,6 +125,13 @@ const toggleRow = (id) => {
                             </td>
                             <td class="py-2 px-3 text-[11px] text-right">
                                 <div class="flex gap-1 justify-end">
+                                    <Link
+                                        :href="route('admin.tanford-members.show', member.id)"
+                                        class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] border border-gray-200 text-gray-700 bg-white hover:bg-gray-50"
+                                    >
+                                        <span class="material-icons text-[13px]">visibility</span>
+                                        <span>View details</span>
+                                    </Link>
                                     <button
                                         type="button"
                                         class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] border border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 disabled:opacity-60 disabled:cursor-default"

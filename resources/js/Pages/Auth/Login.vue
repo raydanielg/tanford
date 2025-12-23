@@ -82,7 +82,7 @@ const submit = () => {
             <div class="max-w-md w-full bg-white rounded-3xl shadow-xl border border-gray-100 p-8 sm:p-10">
                 <!-- Logo top -->
                 <div class="mb-4 flex justify-center">
-                    <img src="/tanford.logo.png" alt="Tanford Logo" class="h-12 w-auto" />
+                    <img :src="'/tanford.logo.png'" alt="Tanford Logo" class="h-12 w-auto" />
                 </div>
 
                 <!-- Welcome copy -->

@@ -355,6 +355,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Admin TANFORD members
     Route::get('/admin/tanford-members', [AdminTanfordMemberController::class, 'index'])->name('admin.tanford-members.index');
+    Route::get('/admin/tanford-members/{member}', [AdminTanfordMemberController::class, 'show'])->name('admin.tanford-members.show');
     Route::post('/admin/tanford-members/{member}/status', [AdminTanfordMemberController::class, 'updateStatus'])->name('admin.tanford-members.update-status');
 
     // Admin header notifications - mark all as read
