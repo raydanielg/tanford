@@ -48,7 +48,7 @@
                     href="/forumregster"
                     class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-emerald-600 hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-300 dark:focus:ring-emerald-900"
                 >
-                    WE TANZANIA TRADE AND LOGISTICS FORUM 2026
+                    TANZANIA TRADE AND LOGISTICS FORUM 2026
                 </a>
                 <a
                     href="/uaeresidents"

@@ -226,7 +226,7 @@ const toggleMobileMenu = () => {
 
                     <!-- Get Started button -->
                     <a
-                        href="/how-it-works"
+                        href="/tanford-membership"
                         class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded text-xs font-semibold flex items-center gap-1 transition"
                     >
                         Get Started
@@ -260,7 +260,7 @@ const toggleMobileMenu = () => {
 
                     <div class="pt-3 mt-3 border-t border-gray-100 flex flex-col gap-2">
                         <a
-                            href="/how-it-works"
+                            href="/tanford-membership"
                             class="inline-flex justify-center items-center rounded-md bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700"
                         >
                             Get Started

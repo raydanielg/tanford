@@ -26,6 +26,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\ForumRegistrationController;
 use App\Http\Controllers\UaeResidentController;
+use App\Http\Controllers\TanfordMemberController;
 use App\Http\Controllers\Admin\PostController as AdminPostController;
 use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
 use App\Http\Controllers\Admin\MemberOrganizationController as AdminMemberController;
@@ -44,6 +45,7 @@ use App\Http\Controllers\Admin\MailSettingController as AdminMailSettingControll
 use App\Http\Controllers\Admin\SeoSettingController as AdminSeoSettingController;
 use App\Http\Controllers\Admin\SecuritySettingController as AdminSecuritySettingController;
 use App\Http\Controllers\Admin\HeroController as AdminHeroController;
+use App\Http\Controllers\Admin\TanfordMemberController as AdminTanfordMemberController;
 
 Route::get('/', function () {
     $latestPosts = Post::query()
@@ -161,6 +163,15 @@ Route::post('/forumregster', [ForumRegistrationController::class, 'store'])->nam
 
 Route::get('/forumregster/preview/{registration}', [ForumRegistrationController::class, 'preview'])
     ->name('forum.register.preview');
+
+Route::get('/tanford-membership', function () {
+    return Inertia::render('TanfordMembership');
+})->name('tanford-membership');
+
+Route::post('/tanford-membership', [TanfordMemberController::class, 'store'])->name('tanford-membership.store');
+
+Route::get('/tanford-membership/preview/{member}', [TanfordMemberController::class, 'preview'])
+    ->name('tanford-membership.preview');
 
 Route::get('/dashboard', function () {
     $userCount = User::query()->count();
@@ -341,6 +352,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Admin UAE residents export
     Route::get('/admin/uae-residents/export', [AdminUaeResidentController::class, 'export'])->name('admin.uae-residents.export');
+
+    // Admin TANFORD members
+    Route::get('/admin/tanford-members', [AdminTanfordMemberController::class, 'index'])->name('admin.tanford-members.index');
+    Route::post('/admin/tanford-members/{member}/status', [AdminTanfordMemberController::class, 'updateStatus'])->name('admin.tanford-members.update-status');
 
     // Admin header notifications - mark all as read
     Route::post('/admin/header-notifications/read-all', function (Request $request) {
