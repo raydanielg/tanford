@@ -60,7 +60,7 @@ const toggleMobileMenu = () => {
                 <!-- Left: Logo with white background -->
                 <div class="flex items-center gap-3 bg-white px-3 py-2 rounded">
                     <img
-                        src="/tanford.logo.png"
+                        :src="'/tanford.logo.png'"
                         alt="TANFORD Logo"
                         class="h-8 sm:h-10 w-auto"
                     />
