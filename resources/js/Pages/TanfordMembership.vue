@@ -41,6 +41,8 @@ const serviceOptions = [
 ];
 
 const handleSubmit = () => {
+    if (form.processing) return;
+
     form.post(route('tanford-membership.store'), {
         preserveScroll: true,
         onSuccess: () => {
@@ -86,9 +88,14 @@ const handleSubmit = () => {
                                     <input
                                         v-model="form.full_name"
                                         type="text"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        :class="form.errors.full_name ? 'border-rose-500' : 'border-gray-300'"
                                         required
+                                        autocomplete="name"
                                     />
+                                    <p v-if="form.errors.full_name" class="mt-1 text-xs text-rose-600">
+                                        {{ form.errors.full_name }}
+                                    </p>
                                 </div>
 
                                 <div>
@@ -104,46 +111,68 @@ const handleSubmit = () => {
 
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">
-                                        Nationality / Uraia
+                                        Nationality / Uraia <span class="text-rose-600">*</span>
                                     </label>
                                     <input
                                         v-model="form.nationality"
                                         type="text"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        :class="form.errors.nationality ? 'border-rose-500' : 'border-gray-300'"
+                                        required
                                     />
+                                    <p v-if="form.errors.nationality" class="mt-1 text-xs text-rose-600">
+                                        {{ form.errors.nationality }}
+                                    </p>
                                 </div>
 
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">
-                                        Passport or ID Number / Namba ya Kitambulisho au Pasipoti
+                                        Passport or ID Number / Namba ya Kitambulisho au Pasipoti <span class="text-rose-600">*</span>
                                     </label>
                                     <input
                                         v-model="form.passport_or_id"
                                         type="text"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        :class="form.errors.passport_or_id ? 'border-rose-500' : 'border-gray-300'"
+                                        required
                                     />
+                                    <p v-if="form.errors.passport_or_id" class="mt-1 text-xs text-rose-600">
+                                        {{ form.errors.passport_or_id }}
+                                    </p>
                                 </div>
 
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">
-                                        WhatsApp Number / Namba ya WhatsApp
+                                        WhatsApp Number / Namba ya WhatsApp <span class="text-rose-600">*</span>
                                     </label>
                                     <input
                                         v-model="form.whatsapp"
                                         type="tel"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        :class="form.errors.whatsapp ? 'border-rose-500' : 'border-gray-300'"
+                                        required
+                                        autocomplete="tel"
                                     />
+                                    <p v-if="form.errors.whatsapp" class="mt-1 text-xs text-rose-600">
+                                        {{ form.errors.whatsapp }}
+                                    </p>
                                 </div>
 
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">
-                                        Email Address / Barua Pepe
+                                        Email Address / Barua Pepe <span class="text-rose-600">*</span>
                                     </label>
                                     <input
                                         v-model="form.email"
                                         type="email"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        :class="form.errors.email ? 'border-rose-500' : 'border-gray-300'"
+                                        required
+                                        autocomplete="email"
                                     />
+                                    <p v-if="form.errors.email" class="mt-1 text-xs text-rose-600">
+                                        {{ form.errors.email }}
+                                    </p>
                                 </div>
                             </div>
                         </section>
@@ -157,22 +186,29 @@ const handleSubmit = () => {
                             <div class="grid gap-6 md:grid-cols-2">
                                 <div class="md:col-span-2">
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">
-                                        Company Name / Jina la Kampuni
+                                        Company Name / Jina la Kampuni <span class="text-rose-600">*</span>
                                     </label>
                                     <input
                                         v-model="form.company_name"
                                         type="text"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        :class="form.errors.company_name ? 'border-rose-500' : 'border-gray-300'"
+                                        required
                                     />
+                                    <p v-if="form.errors.company_name" class="mt-1 text-xs text-rose-600">
+                                        {{ form.errors.company_name }}
+                                    </p>
                                 </div>
 
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">
-                                        Country of Registration / Nchi iliyosajiliwa
+                                        Country of Registration / Nchi iliyosajiliwa <span class="text-rose-600">*</span>
                                     </label>
                                     <select
                                         v-model="form.country_of_registration"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        :class="form.errors.country_of_registration ? 'border-rose-500' : 'border-gray-300'"
+                                        required
                                     >
                                         <option value="">Select / Chagua</option>
                                         <option value="Tanzania">Tanzania</option>
@@ -183,13 +219,18 @@ const handleSubmit = () => {
 
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">
-                                        Business Location / Mahali Biashara Ilipo
+                                        Business Location / Mahali Biashara Ilipo <span class="text-rose-600">*</span>
                                     </label>
                                     <input
                                         v-model="form.business_location"
                                         type="text"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        :class="form.errors.business_location ? 'border-rose-500' : 'border-gray-300'"
+                                        required
                                     />
+                                    <p v-if="form.errors.business_location" class="mt-1 text-xs text-rose-600">
+                                        {{ form.errors.business_location }}
+                                    </p>
                                 </div>
 
                                 <div class="md:col-span-2">
@@ -223,13 +264,18 @@ const handleSubmit = () => {
 
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">
-                                        Registration No. / Namba ya Usajili
+                                        Registration No. / Namba ya Usajili <span class="text-rose-600">*</span>
                                     </label>
                                     <input
                                         v-model="form.registration_number"
                                         type="text"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        :class="form.errors.registration_number ? 'border-rose-500' : 'border-gray-300'"
+                                        required
                                     />
+                                    <p v-if="form.errors.registration_number" class="mt-1 text-xs text-rose-600">
+                                        {{ form.errors.registration_number }}
+                                    </p>
                                 </div>
 
                                 <div>
@@ -346,14 +392,19 @@ const handleSubmit = () => {
 
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">
-                                        Signature / Sahihi (Name)
+                                        Signature / Sahihi (Name) <span class="text-rose-600">*</span>
                                     </label>
                                     <input
                                         v-model="form.signature_name"
                                         type="text"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        :class="form.errors.signature_name ? 'border-rose-500' : 'border-gray-300'"
                                         placeholder="Type your full name / Andika jina kamili"
+                                        required
                                     />
+                                    <p v-if="form.errors.signature_name" class="mt-1 text-xs text-rose-600">
+                                        {{ form.errors.signature_name }}
+                                    </p>
                                 </div>
                             </div>
                         </section>

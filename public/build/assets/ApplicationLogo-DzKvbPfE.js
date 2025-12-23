@@ -1,0 +1,1 @@
+import o from"/tagged_4926563.png";import{_ as c}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as t,o as r}from"./app-Daoq27EY.js";const e={},n={src:o,alt:"Tanford logo",class:"h-8 w-8 object-contain"};function s(_,a){return r(),t("img",n)}const f=c(e,[["render",s]]);export{f as A};
