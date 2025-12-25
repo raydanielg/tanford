@@ -14,6 +14,11 @@ use Inertia\Response;
 
 class ForumRegistrationController extends Controller
 {
+    public function show(): Response
+    {
+        return Inertia::render('ForumRegistration');
+    }
+
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
