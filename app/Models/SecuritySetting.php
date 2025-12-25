@@ -14,10 +14,12 @@ class SecuritySetting extends Model
         'password_min_length',
         'login_rate_limit',
         'two_factor_enabled',
+        'system_enabled',
     ];
 
     protected $casts = [
         'allow_registration' => 'boolean',
         'two_factor_enabled' => 'boolean',
+        'system_enabled' => 'boolean',
     ];
 }

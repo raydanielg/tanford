@@ -175,10 +175,10 @@ const submitDiasporaForm = () => {
                         <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">Your Home Advantage Starts Here</h2>
                         <p class="text-lg text-emerald-700 font-semibold mb-2">Exclusive Diaspora Rate to the Tanzania Trade &amp; Logistics Business Forum</p>
                         <p class="text-gray-700 mb-2">
-                            This category is dedicated to Tanzanians living in the UAE and the Middle East who wish to attend the Tanzania Trade &amp; Logistics Forum 2026.
+                            This category is open to attendees from all countries worldwide who wish to join the Tanzania Trade &amp; Logistics Forum 2026.
                         </p>
                         <p class="text-gray-600">
-                            The Diaspora rate is a special discounted package designed to encourage participation, learning, networking, and contribution to national development.
+                            The Diaspora rate is a special discounted package designed to encourage participation, learning, networking, and contribution to national development for Tanzanians and friends of Tanzania across the globe.
                         </p>
                     </div>
 

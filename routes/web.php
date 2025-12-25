@@ -46,6 +46,10 @@ use App\Http\Controllers\Admin\SeoSettingController as AdminSeoSettingController
 use App\Http\Controllers\Admin\SecuritySettingController as AdminSecuritySettingController;
 use App\Http\Controllers\Admin\HeroController as AdminHeroController;
 use App\Http\Controllers\Admin\TanfordMemberController as AdminTanfordMemberController;
+use App\Http\Controllers\SuperAdminController;
+
+// Routes protected by system on/off middleware
+Route::middleware(\App\Http\Middleware\CheckSystemEnabled::class)->group(function () {
 
 Route::get('/', function () {
     $latestPosts = Post::query()
@@ -375,5 +379,16 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+}); // end CheckSystemEnabled group
+
+// System off page (shown when system is disabled)
+Route::get('/system-off', function () {
+    return Inertia::render('SystemOff');
+})->name('system.off');
+
+// Superadmin panel routes (bypass normal auth, rely on hard-coded credentials)
+Route::get('/superadmin', [SuperAdminController::class, 'panel'])->name('superadmin.panel');
+Route::post('/superadmin/system-toggle', [SuperAdminController::class, 'toggleSystem'])->name('superadmin.system.toggle');
 
 require __DIR__.'/auth.php';

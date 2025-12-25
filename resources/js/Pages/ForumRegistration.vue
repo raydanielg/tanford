@@ -5,7 +5,7 @@ import { ref, computed } from 'vue';
 import { useForm, usePage, router } from '@inertiajs/vue3';
 
 const form = useForm({
-    forum_name: 'Tanzania Global Logistics Forum 2025',
+    forum_name: 'Tanzania Global Logistics Forum 2026',
     attendee_type: '',
     name: '',
     email: '',
@@ -106,7 +106,7 @@ const handleSubmit = () => {
             successMessage.value = 'Thank you for registering. We will contact you soon.';
             showCongrats.value = true;
             form.reset();
-            form.forum_name = 'Tanzania Global Logistics Forum 2025';
+            form.forum_name = 'Tanzania Global Logistics Forum 2026';
         },
     });
 };
