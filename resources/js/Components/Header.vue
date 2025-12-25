@@ -72,7 +72,7 @@ const toggleMobileMenu = () => {
                     <a href="/blog" class="hover:text-emerald-600 transition">Blog</a>
                     <a href="/about" class="hover:text-emerald-600 transition">About</a>
                     <a href="/contact" class="hover:text-emerald-600 transition">Contact</a>
-                    <a href="#faq" class="hover:text-emerald-600 transition">FAQ</a>
+                    <a href="/faq" class="hover:text-emerald-600 transition">FAQ</a>
                     
                     <!-- More dropdown -->
                     <div class="relative">
@@ -250,7 +250,7 @@ const toggleMobileMenu = () => {
                     <a href="/blog" class="block py-2 hover:text-emerald-600">Blog</a>
                     <a href="/about" class="block py-2 hover:text-emerald-600">About</a>
                     <a href="/contact" class="block py-2 hover:text-emerald-600">Contact</a>
-                    <a href="#faq" class="block py-2 hover:text-emerald-600">FAQ</a>
+                    <a href="/faq" class="block py-2 hover:text-emerald-600">FAQ</a>
                     <a href="/services" class="block py-2 hover:text-emerald-600">Services</a>
                     <a href="/events" class="block py-2 hover:text-emerald-600">Events</a>
                     <a href="/resources" class="block py-2 hover:text-emerald-600">Resources</a>

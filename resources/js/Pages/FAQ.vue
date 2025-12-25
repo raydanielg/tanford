@@ -8,36 +8,76 @@ const openIndex = ref(null);
 const faqs = [
     {
         question: 'What is TANFORD?',
-        answer: 'TANFORD stands for Tanzania Freight Forwarders Representation in Dubai and the GCC Region. It is a professional business coordination platform that brings together Tanzanian entrepreneurs, logistics companies, and freight professionals operating across the Gulf countries.'
+        answer:
+            'TANFORD stands for Tanzania Freight Forwarders Representation in Dubai and the GCC Region. It is a professional coordination and networking platform that connects Tanzanian entrepreneurs, logistics companies, and freight professionals operating across the Gulf countries and beyond.',
+        image: '/images/faq/faq-network.jpg',
+    },
+    {
+        question: 'Who can join TANFORD?',
+        answer:
+            'TANFORD is open to Tanzanian and international freight forwarders, logistics providers, shipping lines, warehouse operators, traders, and friends of Tanzania who are interested in trade, logistics, and investment opportunities between Tanzania, the GCC region, and the rest of the world.',
+        image: '/images/faq/faq-membership.jpg',
     },
     {
         question: 'How can I become a member?',
-        answer: 'To become a member, visit our membership page or contact us directly at info@tanford.net. Our team will guide you through the registration process and membership benefits.'
+        answer:
+            'You can become a member by visiting our TANFORD Membership page and submitting the online application form. You may also reach us directly at info@tanford.net or via phone/WhatsApp for guidance on completing your registration and selecting the right membership category.',
+        image: '/images/faq/faq-join.jpg',
     },
     {
-        question: 'What are the membership benefits?',
-        answer: 'Members gain access to exclusive networking events, professional development programs, trade forums, digital platforms, and connections with key trade institutions in Tanzania and the GCC region.'
+        question: 'What are the key membership benefits?',
+        answer:
+            'Members gain access to exclusive networking forums, one-on-one B2B matchmaking, trade missions, industry insights, professional development programs, and visibility on TANFORD digital platforms. Members also benefit from connections with key public and private trade institutions in Tanzania and the GCC region.',
+        image: '/images/faq/faq-benefits.jpg',
+    },
+    {
+        question: 'Do you support companies outside the GCC region?',
+        answer:
+            'Yes. While TANFORD has a strong presence in Dubai and the GCC, we actively work with partners and members from East Africa, Europe, Asia, and other regions who are interested in using Tanzania and the GCC as trade and logistics hubs.',
+        image: '/images/faq/faq-global.jpg',
     },
     {
         question: 'How often are forums and events held?',
-        answer: 'We organize regular forums and events throughout the year. Major events include our annual Tanzania Global Logistics Forum. Check our events page for the latest schedule.'
+        answer:
+            'We organize a mix of flagship events such as the Tanzania Global Logistics Forum, sector-focused roundtables, training workshops, and networking mixers throughout the year. Dates and details are regularly updated on our Events page and shared via email and social media.',
+        image: '/images/faq/faq-events.jpg',
     },
     {
         question: 'Can I register for events online?',
-        answer: 'Yes! You can register for most of our events through our digital registration platform. Visit the event page and click the registration button to get started.'
+        answer:
+            'Yes. Most TANFORD events offer online registration through our digital platform. Simply visit the specific event page, review the details, and click the registration button to complete your booking and secure your seat.',
+        image: '/images/faq/faq-register.jpg',
     },
     {
         question: 'What is the membership fee?',
-        answer: 'Membership fees vary depending on the membership tier and your business type. Contact us at info@tanford.net for detailed pricing information.'
+        answer:
+            'Membership fees depend on the category you choose (individual, SME, corporate, or partner). We also offer special packages for strategic partners and institutional collaborators. For detailed pricing and current offers, please contact us at info@tanford.net.',
+        image: '/images/faq/faq-fees.jpg',
     },
     {
         question: 'How can I contact TANFORD?',
-        answer: 'You can reach us via email at info@tanford.net, phone at +971 56 486 4558, or through our contact form on the website. We typically respond within 24 hours.'
+        answer:
+            'You can reach us via email at info@tanford.net, phone at +971 56 486 4558, or through the contact form on the website. Our team is available to respond to enquiries about membership, events, partnerships, and media within typical business hours.',
+        image: '/images/faq/faq-contact.jpg',
     },
     {
         question: 'Is TANFORD only for freight forwarders?',
-        answer: 'While TANFORD primarily serves freight forwarders and logistics professionals, we welcome other professionals in the trade and logistics sectors who are interested in networking and business growth.'
-    }
+        answer:
+            'No. TANFORD primarily serves freight forwarders and logistics professionals, but we also welcome traders, exporters, importers, financiers, technology providers, and professionals from related sectors who are keen on building structured trade and logistics links with Tanzania and the GCC.',
+        image: '/images/faq/faq-logistics.jpg',
+    },
+    {
+        question: 'Can TANFORD support my company to enter the Tanzanian market?',
+        answer:
+            'Yes. Through our network of partners and experts on the ground, TANFORD can help you understand market entry options, connect with vetted service providers, and introduce you to relevant institutions, associations, and private sector players in Tanzania.',
+        image: '/images/faq/faq-market-entry.jpg',
+    },
+    {
+        question: 'Do you offer sponsorship and partnership opportunities?',
+        answer:
+            'We welcome collaborations with logistics companies, airlines, shipping lines, ports, banks, technology firms, and development partners who share our vision. Sponsorship and partnership packages are available for key events and long-term strategic programs.',
+        image: '/images/faq/faq-partners.jpg',
+    },
 ];
 
 const toggleFAQ = (index) => {
@@ -76,12 +116,12 @@ const toggleFAQ = (index) => {
                         </p>
                     </div>
 
-                    <!-- FAQ Accordion -->
+                    <!-- FAQ Accordion with optional images -->
                     <div class="space-y-4">
                         <div
                             v-for="(faq, index) in faqs"
                             :key="index"
-                            class="border border-gray-200 rounded-lg overflow-hidden"
+                            class="border border-gray-200 rounded-lg overflow-hidden bg-white/80 backdrop-blur"
                         >
                             <button
                                 @click="toggleFAQ(index)"
@@ -95,13 +135,24 @@ const toggleFAQ = (index) => {
                                     <span class="material-icons">expand_more</span>
                                 </span>
                             </button>
-                            
-                            <!-- Answer -->
+
+                            <!-- Answer and image -->
                             <div
                                 v-if="openIndex === index"
-                                class="px-6 py-4 bg-white border-t border-gray-200"
+                                class="px-6 py-5 bg-white border-t border-gray-200"
                             >
-                                <p class="text-gray-600 leading-relaxed">{{ faq.answer }}</p>
+                                <div class="grid gap-4 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] items-start">
+                                    <p class="text-gray-600 leading-relaxed">
+                                        {{ faq.answer }}
+                                    </p>
+                                    <div v-if="faq.image" class="w-full flex justify-end">
+                                        <img
+                                            :src="faq.image"
+                                            :alt="faq.question"
+                                            class="w-full max-w-xs rounded-lg shadow-md object-cover"
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
