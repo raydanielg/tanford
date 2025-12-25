@@ -155,9 +155,7 @@ Route::post('/uaeresidents', [UaeResidentController::class, 'store'])->name('uae
 Route::get('/uaeresidents/preview/{resident}', [UaeResidentController::class, 'preview'])
     ->name('uaeresidents.preview');
 
-Route::get('/forumregster', function () {
-    return Inertia::render('ForumRegistration');
-});
+Route::get('/forumregster', [ForumRegistrationController::class, 'show'])->name('forum.register.show');
 
 Route::post('/forumregster', [ForumRegistrationController::class, 'store'])->name('forum.register.store');
 
