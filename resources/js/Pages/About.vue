@@ -1,6 +1,11 @@
 <script setup>
 import Header from '@/Components/Header.vue';
 import Footer from '@/Components/Footer.vue';
+
+const heroImage =
+    typeof window !== 'undefined'
+        ? `${window.location.origin}/images/Xerin-Logistics--1229x1536.jpg`
+        : '/images/Xerin-Logistics--1229x1536.jpg';
 </script>
 
 <template>
@@ -8,7 +13,10 @@ import Footer from '@/Components/Footer.vue';
         <Header />
         <main>
             <!-- Hero section with breadcrumb overlay -->
-            <section class="relative h-80 bg-cover bg-center flex flex-col items-center justify-center" style="background-image: url('/images/Xerin-Logistics--1229x1536.jpg');">
+            <section
+                class="relative h-80 bg-cover bg-center flex flex-col items-center justify-center"
+                :style="{ backgroundImage: `url(${heroImage})` }"
+            >
                 <div class="absolute inset-0 bg-gradient-to-b from-emerald-600/60 via-emerald-700/50 to-emerald-900/70 backdrop-blur-sm"></div>
                 <div class="relative z-10 text-center text-white px-4 mb-8">
                     <h1 class="text-5xl sm:text-6xl font-extrabold tracking-tight">About Us</h1>
@@ -53,7 +61,7 @@ import Footer from '@/Components/Footer.vue';
                         </div>
                         <div class="rounded-lg overflow-hidden shadow-2xl">
                             <img
-                                src="/images/Xerin-Logistics--1229x1536.jpg"
+                                :src="heroImage"
                                 alt="TANFORD Logistics Network"
                                 class="w-full h-full object-cover"
                             />
