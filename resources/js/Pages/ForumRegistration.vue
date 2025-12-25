@@ -177,7 +177,7 @@ const handleSubmit = () => {
                                 <!-- Image -->
                                 <div class="relative h-72 md:h-full bg-gray-100">
                                     <img
-                                        src="/images/DXB_3576-1536x1024.jpg"
+                                        :src="'/images/DXB_3576-1536x1024.jpg'"
                                         alt="Tanzania Global Trade & Logistics Forum venue"
                                         class="w-full h-full object-cover"
                                     />
